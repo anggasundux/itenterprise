@@ -1,0 +1,27 @@
+<h2>Daftar Permintaan Barang IT</h2>
+
+<table border="1" cellpadding="6">
+<tr>
+    <th>Barang</th>
+    <th>Jumlah</th>
+    <th>Peminta</th>
+    <th>Status</th>
+    <th>Aksi</th>
+</tr>
+
+{% for p in permintaan_list %}
+<tr>
+    <td>{{ p.barang }}</td>
+    <td>{{ p.jumlah }}</td>
+    <td>{{ p.peminta.username }}</td>
+    <td>{{ p.status }}</td>
+    <td>
+        {% if p.status == "pending" %}
+            <a href="{% url 'approve_permintaan' p.id %}">✅ Approve</a>
+        {% else %}
+            -
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
+</table>

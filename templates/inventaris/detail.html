@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h3>📄 Detail Aset</h3>
+
+<table class="table table-bordered w-50">
+
+<tr>
+<th>Kode</th>
+<td>{{ aset.kode_aset }}</td>
+</tr>
+
+<tr>
+<th>Nama</th>
+<td>{{ aset.nama_aset }}</td>
+</tr>
+
+<tr>
+<th>Kategori</th>
+<td>{{ aset.kategori }}</td>
+</tr>
+
+<tr>
+<th>Merek</th>
+<td>{{ aset.merek }}</td>
+</tr>
+
+<tr>
+<th>Nomor Seri</th>
+<td>{{ aset.nomor_seri }}</td>
+</tr>
+
+<tr>
+<th>Ruangan</th>
+<td>{{ aset.ruangan }}</td>
+</tr>
+
+<tr>
+<th>Kondisi</th>
+<td>{{ aset.kondisi }}</td>
+</tr>
+
+<tr>
+<th>Tanggal Beli</th>
+<td>{{ aset.tanggal_beli }}</td>
+</tr>
+
+<tr>
+<th>Keterangan</th>
+<td>{{ aset.keterangan }}</td>
+</tr>
+
+</table>
+
+<h4>📜 Histori Mutasi</h4>
+<table class="table table-bordered w-75">
+<tr>
+<th>Tanggal</th>
+<th>Dari</th>
+<th>Ke</th>
+</tr>
+
+{% for h in histori %}
+<tr>
+<td>{{ h.tanggal }}</td>
+<td>{{ h.dari_ruangan }}</td>
+<td>{{ h.ke_ruangan }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="3">Belum pernah mutasi</td></tr>
+{% endfor %}
+</table>
+
+<a href="{% url 'inventaris_list' %}" class="btn btn-secondary">⬅ Kembali</a>
+
+{% endblock %}

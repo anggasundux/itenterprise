@@ -1,0 +1,23 @@
+<h2>Laporan Inventaris Aset RS</h2>
+
+<table border="1" width="100%" cellpadding="5">
+<tr>
+<th>Kode</th>
+<th>Nama</th>
+<th>Kategori</th>
+<th>Nomor Seri</th>
+<th>Ruangan</th>
+<th>Kondisi</th>
+</tr>
+
+{% for a in aset %}
+<tr>
+<td>{{ a.kode_aset }}</td>
+<td>{{ a.nama_aset }}</td>
+<td>{{ a.kategori }}</td>
+<td>{{ a.nomor_seri }}</td>
+<td>{{ a.ruangan }}</td>
+<td>{{ a.kondisi }}</td>
+</tr>
+{% endfor %}
+</table>

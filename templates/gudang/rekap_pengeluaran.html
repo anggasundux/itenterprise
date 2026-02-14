@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h3 class="mb-3">📊 Rekap Total Penggunaan Barang</h3>
+
+<table class="table table-bordered table-striped text-center">
+<thead class="table-primary">
+<tr>
+    <th>Barang</th>
+    <th>Total Digunakan</th>
+    <th>Satuan</th>
+</tr>
+</thead>
+
+<tbody>
+{% for r in data %}
+<tr>
+    <td>{{ r.barang__nama_barang }}</td>
+    <td>{{ r.total_pakai }}</td>
+    <td>{{ r.barang__satuan }}</td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="3">Belum ada data</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<a href="{% url 'gudang_list' %}" class="btn btn-secondary">
+⬅ Kembali
+</a>
+
+{% endblock %}

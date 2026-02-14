@@ -1,0 +1,260 @@
+:root {
+    --rs-blue: #0d6efd;
+    --rs-dark: #1e293b;
+    --rs-light: #f4f6f9;
+    --rs-white: #ffffff;
+    --rs-gray: #475569;
+}
+
+/* RESET BOOTSTRAP SHIFT */
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+/* ================= BASE ================= */
+
+body {
+    font-family: Arial, sans-serif;
+    background: var(--rs-light);
+    color: var(--rs-gray);
+}
+
+/* ================= NAVBAR ================= */
+
+.navbar {
+    background: linear-gradient(90deg, #0d6efd, #2563eb, #1e40af);
+    color: white;
+    padding: 15px 20px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0,0,0,.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* ================= LOGO ================= */
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-rs {
+    height: 40px;
+    width: auto;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,.3));
+}
+
+.nav-right {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+/* ================= LAYOUT ================= */
+
+.container,
+.container-fluid {
+    display: flex;
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar {
+    width: 220px;
+    background: var(--rs-dark);
+    min-height: 100vh;
+    color: white;
+    margin-left: 0;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border-left: 4px solid transparent;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.sidebar li:hover {
+    background: #334155;
+    border-left: 4px solid var(--rs-blue);
+}
+
+.sidebar i {
+    width: 20px;
+    text-align: center;
+    color: #94a3b8;
+}
+
+.sidebar li:hover i {
+    color: white;
+}
+
+.sidebar a {
+    color: white;
+    text-decoration: none;
+}
+
+/* ================= CONTENT ================= */
+
+.content {
+    flex: 1;
+    padding: 20px;
+}
+
+/* ================= FOOTER ================= */
+
+.footer {
+    background: var(--rs-white);
+    border-top: 1px solid #e5e7eb;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    color: var(--rs-gray);
+    font-size: 14px;
+    position: fixed;
+    bottom: 0;
+    left: 220px;
+    right: 0;
+}
+
+/* ================= CARDS ================= */
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.card {
+    background: var(--rs-white);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,.08);
+    transition: 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+}
+
+.card h4 {
+    margin: 0;
+    font-size: 14px;
+    color: var(--rs-gray);
+}
+
+.card p {
+    font-size: 28px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+/* ===== WARNA ===== */
+
+.blue { border-left: 6px solid #0d6efd; }
+.green { border-left: 6px solid #16a34a; }
+.orange { border-left: 6px solid #f59e0b; }
+.red { border-left: 6px solid #dc2626; }
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 900px) {
+
+    .container,
+    .container-fluid {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        min-height: auto;
+        display: flex;
+        overflow-x: auto;
+    }
+
+    .sidebar ul {
+        display: flex;
+    }
+
+    .sidebar li {
+        flex-direction: column;
+        padding: 10px;
+        font-size: 12px;
+    }
+
+    .content {
+        padding: 15px;
+    }
+
+    .cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .footer {
+        left: 0;
+        position: relative;
+    }
+}
+
+@media (max-width: 500px) {
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    canvas {
+        width: 100% !important;
+        height: auto !important;
+    }
+}
+
+/* ================= DARK MODE ================= */
+.dark-btn{
+    background: rgba(255,255,255,.2);
+    border:none;
+    color:white;
+    padding:6px 10px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+/* ===== DARK MODE ===== */
+
+.dark body{
+    background:#0f172a;
+    color:#e5e7eb;
+}
+
+.dark .content{
+    background:#0f172a;
+}
+
+.dark .card{
+    background:#1e293b;
+    color:white;
+}
+
+.dark .footer{
+    background:#1e293b;
+    color:#cbd5f5;
+}
+
+.dark .sidebar{
+    background:#020617;
+}

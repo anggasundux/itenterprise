@@ -1,0 +1,56 @@
+{% if user.is_authenticated %}
+<aside class="sidebar">
+<ul>
+
+<li>
+    <i class="fa-solid fa-chart-line"></i>
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+</li>
+
+<li>
+    <i class="fa-solid fa-box"></i>
+    <a href="{% url 'inventaris_list' %}">Inventaris</a>
+</li>
+
+<li>
+    <i class="fa-solid fa-ticket"></i>
+    <a href="{% url 'tiket_list' %}">Helpdesk</a>
+</li>
+
+<li>
+    <i class="fa-solid fa-warehouse"></i>
+    <a href="{% url 'gudang_list' %}">Gudang</a>
+</li>
+
+<li>
+    <i class="fa-solid fa-desktop"></i>
+    <a href="{% url 'unit_list' %}">Unit Komputer</a>
+</li>
+
+<li>
+    <i class="fa-solid fa-network-wired"></i>
+    <a href="{% url 'jaringan_list' %}">Jaringan</a>
+</li>
+
+<li>
+    <i class="fa-solid fa-screwdriver-wrench"></i>
+    <a href="{% url 'pemeliharaan_list' %}">Pemeliharaan</a>
+</li>
+
+<li>
+    <i class="fa-solid fa-file-lines"></i>
+    <a href="#">Laporan</a>
+</li>
+
+<hr style="border-color:#334155">
+
+{% if user.is_staff %}
+<li>
+    <i class="fa-solid fa-gear"></i>
+    <a href="{% url 'setup_dashboard' %}">Setup Admin</a>
+</li>
+{% endif %}
+
+</ul>
+</aside>
+{% endif %}

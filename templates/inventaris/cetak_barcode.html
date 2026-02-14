@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Label Barcode RS</title>
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+}
+
+.label{
+    width:200px;
+    text-align:center;
+    padding:6px;
+    border:1px dashed #ccc;
+}
+
+.logo{
+    width:50px;
+    margin-bottom:4px;
+}
+
+.nama{
+    font-size:12px;
+    font-weight:bold;
+}
+
+.kode{
+    font-size:10px;
+    margin-bottom:4px;
+}
+
+.barcode img{
+    width:180px;
+}
+
+.ruangan{
+    font-size:10px;
+    margin-top:4px;
+}
+
+@media print{
+    body{margin:0}
+}
+</style>
+</head>
+
+<body onload="window.print()">
+
+<div class="label">
+
+    <!-- LOGO RS -->
+    <img src="/static/img/logo.png" class="logo">
+
+    <div class="nama">{{ aset.nama_aset }}</div>
+    <div class="kode">{{ aset.kode_aset }}</div>
+
+    <div class="barcode">
+        {% if aset.barcode %}
+            <img src="{{ aset.barcode.url }}">
+        {% endif %}
+    </div>
+
+    <div class="ruangan">
+        {{ aset.ruangan }}
+    </div>
+
+</div>
+
+</body>
+</html>

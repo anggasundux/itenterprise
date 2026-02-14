@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h3>⚙ Admin Setup Panel</h3>
+
+<div class="row mt-3">
+
+<div class="col-md-3 mb-2">
+<a href="{% url 'user_list' %}" class="btn btn-primary w-100">
+👤 Manajemen User
+</a>
+</div>
+
+<div class="col-md-3 mb-2">
+<a href="/admin/" class="btn btn-secondary w-100" target="_blank">
+🛠 Panel Admin
+</a>
+</div>
+
+</div>
+
+{% endblock %}

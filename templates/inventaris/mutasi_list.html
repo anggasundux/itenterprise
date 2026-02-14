@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h3>🔄 Histori Mutasi</h3>
+
+<form method="get" class="row mb-3">
+
+<div class="col-md-3">
+<input type="date" name="start" class="form-control">
+</div>
+
+<div class="col-md-3">
+<input type="date" name="end" class="form-control">
+</div>
+
+<div class="col-md-2">
+<button class="btn btn-primary">Filter</button>
+</div>
+
+</form>
+
+<table class="table table-bordered">
+<tr>
+<th>Tanggal</th>
+<th>Aset</th>
+<th>Nomor Seri</th>
+<th>Dari</th>
+<th>Ke</th>
+</tr>
+
+{% for m in data %}
+<tr>
+<td>{{ m.tanggal|date:"d-m-Y H:i" }}</td>
+<td>{{ m.aset.nama_aset }}</td>
+<td>{{ m.aset.nomor_seri }}</td>
+<td>{{ m.dari_ruangan }}</td>
+<td>{{ m.ke_ruangan }}</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}

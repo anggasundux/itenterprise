@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="content-center">
+
+<div class="card shadow-sm">
+<div class="card-body">
+
+<h4 class="mb-4 text-center">
+{% if unit %}✏ Edit{% else %}➕ Tambah{% endif %}
+Unit Komputer
+</h4>
+
+<form method="POST">
+{% csrf_token %}
+
+<div class="mb-3">
+<label>Nama Unit</label>
+<input type="text" name="nama_unit"
+class="form-control"
+value="{{ unit.nama_unit|default:'' }}" required>
+</div>
+
+<div class="mb-3">
+<label>Hostname</label>
+<input type="text" name="hostname"
+class="form-control"
+value="{{ unit.hostname|default:'' }}">
+</div>
+
+<div class="mb-3">
+<label>IP Address</label>
+<input type="text" name="ip_address"
+class="form-control"
+value="{{ unit.ip_address|default:'' }}" required>
+</div>
+
+<div class="mb-3">
+<label>MAC Address</label>
+<input type="text" name="mac_address"
+class="form-control"
+value="{{ unit.mac_address|default:'' }}">
+</div>
+
+<div class="mb-3">
+<label>Ruangan</label>
+<select name="ruangan" class="form-select">
+{% for r in ruangan_list %}
+<option value="{{ r.id }}"
+{% if unit.ruangan.id == r.id %}selected{% endif %}>
+{{ r.nama }}
+</option>
+{% endfor %}
+</select>
+</div>
+
+<div class="mb-3">
+<label>Pengguna</label>
+<select name="pengguna" class="form-select">
+<option value="">-- Tidak ada --</option>
+{% for u in user_list %}
+<option value="{{ u.id }}"
+{% if unit.pengguna.id == u.id %}selected{% endif %}>
+{{ u.username }}
+</option>
+{% endfor %}
+</select>
+</div>
+
+<div class="mb-3">
+<label>Terhubung ke</label>
+<select name="terhubung_ke" class="form-select">
+<option value="">-- Tidak ada --</option>
+{% for p in perangkat_list %}
+<option value="{{ p.id }}"
+{% if unit.terhubung_ke.id == p.id %}selected{% endif %}>
+{{ p.nama }}
+</option>
+{% endfor %}
+</select>
+</div>
+
+<div class="mb-3">
+<label>Status</label>
+<select name="status" class="form-select">
+<option value="aktif"
+{% if unit.status == 'aktif' %}selected{% endif %}>
+Aktif
+</option>
+
+<option value="maintenance"
+{% if unit.status == 'maintenance' %}selected{% endif %}>
+Maintenance
+</option>
+
+<option value="rusak"
+{% if unit.status == 'rusak' %}selected{% endif %}>
+Rusak
+</option>
+
+<option value="nonaktif"
+{% if unit.status == 'nonaktif' %}selected{% endif %}>
+Non Aktif
+</option>
+</select>
+</div>
+
+<div class="mb-3">
+<label>Sistem Operasi</label>
+<input type="text" name="sistem_operasi"
+class="form-control"
+value="{{ unit.sistem_operasi|default:'' }}">
+</div>
+
+<div class="mb-3">
+<label>Spesifikasi</label>
+<textarea name="spesifikasi"
+class="form-control"
+rows="3">{{ unit.spesifikasi|default:'' }}</textarea>
+</div>
+
+<div class="d-flex justify-content-between">
+
+<button class="btn btn-success px-4">
+💾 Simpan
+</button>
+
+<a href="{% url 'unit_list' %}"
+class="btn btn-secondary px-4">
+⬅ Kembali
+</a>
+
+</div>
+
+</form>
+
+</div>
+</div>
+
+</div>
+
+{% endblock %}

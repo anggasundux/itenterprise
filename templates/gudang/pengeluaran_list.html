@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h3 class="mb-3">📜 Riwayat Pengeluaran Barang</h3>
+
+<table class="table table-bordered table-striped text-center align-middle">
+<thead class="table-primary">
+<tr>
+    <th>Barang</th>
+    <th>Jumlah</th>
+    <th>Satuan</th>
+    <th>Ruangan Tujuan</th>
+    <th>Tanggal</th>
+    <th>Petugas</th>
+    <th>Keterangan</th>
+</tr>
+</thead>
+
+<tbody>
+{% for p in data %}
+<tr>
+    <td>{{ p.barang.nama_barang }}</td>
+    <td>{{ p.jumlah }}</td>
+    <td>{{ p.barang.satuan }}</td>
+
+    <!-- RUANGAN -->
+    <td>
+        {% if p.ruangan %}
+            {{ p.ruangan.nama }}
+        {% else %}
+            -
+        {% endif %}
+    </td>
+
+    <td>{{ p.tanggal|date:"d-m-Y H:i" }}</td>
+
+    <td>
+        {% if p.digunakan_oleh %}
+            {{ p.digunakan_oleh.username }}
+        {% else %}
+            -
+        {% endif %}
+    </td>
+
+    <td>{{ p.keterangan|default:"-" }}</td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="7">Belum ada pengeluaran</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<a href="{% url 'gudang_list' %}" class="btn btn-secondary">
+⬅ Kembali ke Gudang
+</a>
+
+{% endblock %}

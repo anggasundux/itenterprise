@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h3>📋 Daftar Tiket Helpdesk</h3>
+
+<a href="{% url 'tiket_add' %}" class="btn btn-primary mb-3">
+➕ Buat Tiket
+</a>
+
+<!-- ================= FILTER + EXPORT ================= -->
+
+<form method="get" class="row g-2 mb-3">
+
+    <div class="col-md-3">
+        <input type="date" name="start" class="form-control" value="{{ start }}">
+    </div>
+
+    <div class="col-md-3">
+        <input type="date" name="end" class="form-control" value="{{ end }}">
+    </div>
+
+    <div class="col-md-3">
+        <select name="status" class="form-control">
+            <option value="">-- Semua Status --</option>
+            <option value="baru" {% if status == 'baru' %}selected{% endif %}>Baru</option>
+            <option value="proses" {% if status == 'proses' %}selected{% endif %}>Proses</option>
+            <option value="selesai" {% if status == 'selesai' %}selected{% endif %}>Selesai</option>
+            <option value="ditutup" {% if status == 'ditutup' %}selected{% endif %}>Ditutup</option>
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <button class="btn btn-primary">🔍 Filter</button>
+
+        <a href="{% url 'export_tiket' %}?start={{ start }}&end={{ end }}&status={{ status }}"
+           class="btn btn-success ms-2">
+           📥 Export Excel
+        </a>
+    </div>
+
+</form>
+
+<!-- ================= TABEL ================= -->
+
+<table class="table table-bordered table-striped">
+<thead class="table-primary text-center">
+<tr>
+    <th>No Tiket</th>
+    <th>Judul</th>
+    <th>Ruangan</th>
+    <th>Prioritas</th>
+    <th>Status</th>
+    <th>Pelapor</th>
+    <th>Petugas</th>
+    <th>Tanggal</th>
+    <th>SLA</th>
+    <th width="240">Aksi</th>
+</tr>
+</thead>
+
+<tbody>
+{% for t in data %}
+<tr>
+    <td class="fw-bold text-center">{{ t.nomor_tiket }}</td>
+
+    <td>{{ t.judul }}</td>
+
+    <td>
+        {% if t.ruangan %}
+            {{ t.ruangan.nama }}
+        {% else %}
+            -
+        {% endif %}
+    </td>
+
+    <td class="text-center">{{ t.prioritas|upper }}</td>
+
+    <!-- STATUS -->
+    <td class="text-center">
+        {% if t.status == 'baru' %}
+            <span class="badge bg-secondary">Baru</span>
+        {% elif t.status == 'proses' %}
+            <span class="badge bg-warning text-dark">Proses</span>
+        {% elif t.status == 'selesai' %}
+            <span class="badge bg-success">Selesai</span>
+        {% elif t.status == 'ditutup' %}
+            <span class="badge bg-dark">Ditutup</span>
+        {% endif %}
+    </td>
+
+    <td>{{ t.pelapor.username }}</td>
+
+    <!-- PETUGAS -->
+    <td>
+        {% if t.petugas %}
+            {{ t.petugas.username }}
+        {% else %}
+            <span class="text-muted">-</span>
+        {% endif %}
+    </td>
+
+    <td class="text-center">
+        {{ t.tanggal_buat|date:"d-m-Y H:i" }}
+    </td>
+
+    <td class="text-center">
+        {{ t.sla|default:"-" }}
+    </td>
+
+    <!-- AKSI -->
+    <td class="text-center text-nowrap">
+
+        <!-- <a href="{% url 'tiket_edit' t.id %}"
+           class="btn btn-sm btn-warning mb-1">
+           ✏ Edit
+        </a> -->
+
+
+
+        <br>
+
+        <!-- <a href="{% url 'tiket_update_status' t.id 'proses' %}"
+           class="btn btn-sm btn-secondary mb-1">
+           Proses
+        </a> -->
+
+        <a href="{% url 'tiket_update_status' t.id 'selesai' %}"
+           class="btn btn-sm btn-success mb-1">
+           Selesai
+        </a>
+
+        <a href="{% url 'tiket_update_status' t.id 'ditutup' %}"
+           class="btn btn-sm btn-dark mb-1">
+           Tutup
+        </a>
+        <a href="{% url 'tiket_delete' t.id %}"
+           class="btn btn-sm btn-danger mb-1"
+           onclick="return confirm('Yakin hapus tiket ini?')">
+           🗑 Hapus
+        </a>
+        <br>
+
+        <a href="{% url 'tiket_assign_petugas' t.id %}"
+           class="btn btn-sm btn-primary mb-1">
+           Assign
+        </a>
+
+        <a href="{% url 'tiket_detail' t.id %}"
+           class="btn btn-sm btn-info mb-1">
+           Detail
+        </a>
+
+    </td>
+</tr>
+
+{% empty %}
+<tr>
+    <td colspan="10" class="text-center text-muted">
+        Belum ada tiket
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<!-- ================= PAGINATION ================= -->
+
+<nav>
+<ul class="pagination justify-content-center">
+
+{% if data.has_previous %}
+<li class="page-item">
+<a class="page-link"
+href="?page={{ data.previous_page_number }}&start={{ start }}&end={{ end }}&status={{ status }}">
+Prev
+</a>
+</li>
+{% endif %}
+
+<li class="page-item active">
+<span class="page-link">{{ data.number }}</span>
+</li>
+
+{% if data.has_next %}
+<li class="page-item">
+<a class="page-link"
+href="?page={{ data.next_page_number }}&start={{ start }}&end={{ end }}&status={{ status }}">
+Next
+</a>
+</li>
+{% endif %}
+
+</ul>
+</nav>
+
+{% endblock %}

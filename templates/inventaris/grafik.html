@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h3>📊 Grafik Inventaris (Simple)</h3>
+
+<h5>📍 Aset per Ruangan</h5>
+
+{% for r in per_ruangan %}
+<div style="margin-bottom:12px;">
+
+    <strong>{{ r.ruangan__nama }} — {{ r.total }}</strong>
+
+    <div style="
+        background:#e0e0e0;
+        height:18px;
+        border-radius:10px;
+        overflow:hidden;
+        margin-top:4px;
+        width:300px;
+    ">
+        <div style="
+            background:#007bff;
+            height:18px;
+            width: {{ r.total }}0px;
+        "></div>
+    </div>
+
+</div>
+{% endfor %}
+
+<hr>
+
+<h5>⚠ Kondisi Aset</h5>
+
+{% for k in kondisi %}
+<div style="margin-bottom:10px;">
+    {{ k.kondisi }} : <strong>{{ k.total }}</strong>
+</div>
+{% endfor %}
+
+{% endblock %}

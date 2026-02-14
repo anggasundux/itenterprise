@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h3>🔄 Mutasi Aset</h3>
+
+<p><b>{{ aset.kode_aset }}</b> - {{ aset.nama_aset }}</p>
+<p>Ruangan sekarang: <b>{{ aset.ruangan }}</b></p>
+
+<form method="POST">
+{% csrf_token %}
+
+<div class="mb-3">
+<label>Pindah ke Ruangan</label>
+<select name="ruangan" class="form-control" required>
+<option value="">-- Pilih Ruangan --</option>
+
+{% for r in ruangan_list %}
+<option value="{{ r.id }}">{{ r }}</option>
+{% endfor %}
+
+</select>
+</div>
+
+<button class="btn btn-primary">Proses Mutasi</button>
+<a href="{% url 'inventaris_list' %}" class="btn btn-secondary">Batal</a>
+
+</form>
+
+{% endblock %}

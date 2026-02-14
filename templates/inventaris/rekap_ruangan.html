@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h3>📊 Rekap Aset Per Ruangan</h3>
+
+<table class="table table-bordered w-50">
+<tr>
+<th>Ruangan</th>
+<th>Total Aset</th>
+</tr>
+
+{% for r in rekap %}
+<tr>
+<td>{{ r.ruangan__nama }}</td>
+<td>{{ r.total }}</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}

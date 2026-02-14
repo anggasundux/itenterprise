@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Login IT RS</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+
+<body style="background:#f4f6f9;">
+
+<div style="
+    max-width:360px;
+    margin:120px auto;
+    background:white;
+    padding:30px;
+    border-radius:8px;
+    box-shadow:0 4px 10px rgba(0,0,0,.1)
+">
+
+<h2 style="text-align:center;">🏥 IT Management RS</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <!-- supaya redirect setelah login jalan -->
+    <input type="hidden" name="next" value="{{ next }}">
+
+    <input type="text" 
+           name="username" 
+           placeholder="Username" 
+           required
+           style="width:100%;padding:10px;margin:10px 0">
+
+    <input type="password" 
+           name="password" 
+           placeholder="Password" 
+           required
+           style="width:100%;padding:10px;margin:10px 0">
+
+    {% if form.errors %}
+        <div style="color:red;text-align:center;margin-bottom:10px;">
+            Username atau password salah
+        </div>
+    {% endif %}
+
+    <button style="
+        width:100%;
+        padding:10px;
+        background:#0d6efd;
+        color:white;
+        border:none;
+        border-radius:5px;
+    ">
+        Login
+    </button>
+</form>
+
+</div>
+</body>
+</html>

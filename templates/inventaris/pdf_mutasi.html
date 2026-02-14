@@ -1,0 +1,21 @@
+<h2>Laporan Mutasi Aset RS</h2>
+
+<table border="1" width="100%" cellpadding="5">
+<tr>
+<th>Tanggal</th>
+<th>Aset</th>
+<th>Nomor Seri</th>
+<th>Dari</th>
+<th>Ke</th>
+</tr>
+
+{% for m in mutasi %}
+<tr>
+<td>{{ m.tanggal|date:"d-m-Y H:i" }}</td>
+<td>{{ m.aset.nama_aset }}</td>
+<td>{{ m.aset.nomor_seri }}</td>
+<td>{{ m.dari_ruangan }}</td>
+<td>{{ m.ke_ruangan }}</td>
+</tr>
+{% endfor %}
+</table>

@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="content-center">
+
+<div class="card shadow-sm">
+<div class="card-body">
+
+<h4 class="mb-4 text-center">
+{% if perangkat %}✏ Edit{% else %}➕ Tambah{% endif %}
+Perangkat Jaringan
+</h4>
+
+<form method="POST">
+{% csrf_token %}
+
+<!-- NAMA -->
+<div class="mb-3">
+<label>Nama Perangkat</label>
+<input type="text" name="nama" class="form-control"
+value="{{ perangkat.nama|default:'' }}" required>
+</div>
+
+<!-- JENIS -->
+<div class="mb-3">
+<label>Jenis</label>
+<select name="jenis" class="form-select" required>
+
+<option value="">-- Pilih Jenis --</option>
+
+{% for key,val in jenis_list %}
+<option value="{{ key }}"
+{% if perangkat and perangkat.jenis == key %}selected{% endif %}>
+{{ val }}
+</option>
+{% endfor %}
+
+</select>
+</div>
+
+<!-- IP -->
+<div class="mb-3">
+<label>IP Address</label>
+<input type="text" name="ip_address" class="form-control"
+value="{{ perangkat.ip_address|default:'' }}" required>
+</div>
+
+<!-- MAC -->
+<div class="mb-3">
+<label>MAC Address</label>
+<input type="text" name="mac_address" class="form-control"
+value="{{ perangkat.mac_address|default:'' }}">
+</div>
+
+<!-- GEDUNG -->
+<div class="mb-3">
+<label>Gedung</label>
+<select name="gedung" class="form-select">
+
+<option value="">-- Pilih Gedung --</option>
+
+{% for g in gedung_list %}
+<option value="{{ g.id }}"
+{% if perangkat and perangkat.gedung and perangkat.gedung.id == g.id %}selected{% endif %}>
+{{ g.nama }}
+</option>
+{% endfor %}
+
+</select>
+</div>
+
+<!-- RUANGAN -->
+<div class="mb-3">
+<label>Ruangan</label>
+<select name="ruangan" class="form-select">
+
+<option value="">-- Pilih Ruangan --</option>
+
+{% for r in ruangan_list %}
+<option value="{{ r.id }}"
+{% if perangkat and perangkat.ruangan and perangkat.ruangan.id == r.id %}selected{% endif %}>
+{{ r.nama }}
+</option>
+{% endfor %}
+
+</select>
+</div>
+
+<!-- STATUS -->
+<div class="mb-3">
+<label>Status</label>
+<select name="status" class="form-select">
+
+<option value="aktif"
+{% if perangkat and perangkat.status == 'aktif' %}selected{% endif %}>
+Aktif
+</option>
+
+<option value="maintenance"
+{% if perangkat and perangkat.status == 'maintenance' %}selected{% endif %}>
+Maintenance
+</option>
+
+<option value="mati"
+{% if perangkat and perangkat.status == 'mati' %}selected{% endif %}>
+Mati
+</option>
+
+</select>
+</div>
+
+<!-- KETERANGAN -->
+<div class="mb-3">
+<label>Keterangan</label>
+<textarea name="keterangan" class="form-control" rows="3">
+{{ perangkat.keterangan|default:'' }}
+</textarea>
+</div>
+
+<!-- BUTTON -->
+<div class="d-flex justify-content-between">
+
+<button class="btn btn-success px-4">
+💾 Simpan
+</button>
+
+<a href="{% url 'jaringan_list' %}" class="btn btn-secondary px-4">
+⬅ Kembali
+</a>
+
+</div>
+
+</form>
+
+</div>
+</div>
+
+</div>
+
+{% endblock %}

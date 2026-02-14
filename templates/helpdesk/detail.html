@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h4>🎫 Detail Tiket</h4>
+
+<p><b>Judul:</b> {{ tiket.judul }}</p>
+<p><b>Keluhan:</b> {{ tiket.keluhan }}</p>
+<p><b>Status:</b> {{ tiket.status }}</p>
+<p><b>Petugas:</b> {{ tiket.petugas|default:"-" }}</p>
+
+<hr>
+
+<h5>📜 Histori Status</h5>
+
+<ul>
+{% for h in histori %}
+<li>{{ h.status }} - {{ h.waktu|date:"d-m-Y H:i" }}</li>
+{% empty %}
+<li>Belum ada perubahan</li>
+{% endfor %}
+</ul>
+
+<a href="{% url 'tiket_list' %}" class="btn btn-secondary">Kembali</a>
+
+{% endblock %}

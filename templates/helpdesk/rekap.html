@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h3>📊 Rekap Tiket Helpdesk</h3>
+
+<form method="get" class="row g-3 mb-4">
+
+<div class="col-md-4">
+    <label>Dari Tanggal</label>
+    <input type="date" name="start" class="form-control" value="{{ start }}">
+</div>
+
+<div class="col-md-4">
+    <label>Sampai Tanggal</label>
+    <input type="date" name="end" class="form-control" value="{{ end }}">
+</div>
+
+<div class="col-md-4 d-flex align-items-end">
+    <button class="btn btn-primary">🔍 Filter</button>
+</div>
+
+</form>
+
+<table class="table table-bordered text-center">
+<thead class="table-primary">
+<tr>
+    <th>Status</th>
+    <th>Total Tiket</th>
+</tr>
+</thead>
+
+<tbody>
+{% for r in rekap %}
+<tr>
+    <td>{{ r.status|upper }}</td>
+    <td>{{ r.total }}</td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="2">Tidak ada data</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<a href="{% url 'tiket_list' %}" class="btn btn-secondary">
+⬅ Kembali
+</a>
+
+{% endblock %}

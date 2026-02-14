@@ -1,0 +1,15 @@
+<h4>📆 Rekap Mutasi per Bulan</h4>
+
+<table class="table table-bordered">
+<tr>
+<th>Bulan</th>
+<th>Total Mutasi</th>
+</tr>
+
+{% for m in mutasi_bulanan %}
+<tr>
+<td>{{ m.bulan|date:"F Y" }}</td>
+<td>{{ m.total }}</td>
+</tr>
+{% endfor %}
+</table>

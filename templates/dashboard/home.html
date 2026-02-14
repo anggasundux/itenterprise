@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+.dashboard-title{
+    font-weight:600;
+}
+
+.stat-card{
+    transition:.2s;
+}
+.stat-card:hover{
+    transform: translateY(-5px);
+}
+
+.stat-icon{
+    font-size:40px;
+    opacity:.3;
+    position:absolute;
+    right:15px;
+    top:15px;
+}
+
+.section-title{
+    font-weight:600;
+    margin-bottom:15px;
+}
+</style>
+
+<h2 class="mb-4 dashboard-title">📊 Dashboard IT Rumah Sakit</h2>
+
+<!-- ================= STAT CARDS ================= -->
+
+<div class="row g-3 mb-4">
+
+<div class="col-md-3">
+<div class="card stat-card shadow-sm border-primary position-relative">
+<div class="card-body">
+<i class="bi bi-pc-display stat-icon text-primary"></i>
+<h6>Total Aset</h6>
+<h3 class="fw-bold">{{ total_aset }}</h3>
+</div>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card stat-card shadow-sm border-success position-relative">
+<div class="card-body">
+<i class="bi bi-ticket stat-icon text-success"></i>
+<h6>Tiket Aktif</h6>
+<h3 class="fw-bold">{{ tiket_aktif }}</h3>
+</div>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card stat-card shadow-sm border-warning position-relative">
+<div class="card-body">
+<i class="bi bi-tools stat-icon text-warning"></i>
+<h6>Maintenance</h6>
+<h3 class="fw-bold">{{ maintenance_hari_ini }}</h3>
+</div>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card stat-card shadow-sm border-danger position-relative">
+<div class="card-body">
+<i class="bi bi-exclamation-triangle stat-icon text-danger"></i>
+<h6>Stok Minim</h6>
+<h3 class="fw-bold">{{ stok_minim }}</h3>
+</div>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card stat-card shadow-sm border-danger position-relative">
+<div class="card-body">
+<i class="bi bi-x-circle stat-icon text-danger"></i>
+<h6>Aset Rusak</h6>
+<h3 class="fw-bold">{{ aset_rusak }}</h3>
+</div>
+</div>
+</div>
+
+</div>
+
+<!-- ================= UPTIME ================= -->
+
+<div class="card shadow-sm mb-4">
+<div class="card-body">
+
+<h5 class="section-title">📈 Uptime Server Bulan Ini</h5>
+
+<div class="d-flex justify-content-between mb-1">
+<span>Server Utama</span>
+<strong>{{ uptime_percent }}%</strong>
+</div>
+
+<div class="progress" style="height:20px;">
+<div class="progress-bar bg-success progress-bar-striped progress-bar-animated"
+     style="width: {{ uptime_percent }}%">
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ================= TIKET ================= -->
+
+<div class="card shadow-sm mb-4">
+<div class="card-body">
+
+<h5 class="section-title">🎫 Rekap Tiket</h5>
+
+<table class="table table-hover table-bordered text-center align-middle">
+<thead class="table-primary">
+<tr>
+<th>Status</th>
+<th>Jumlah</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><span class="badge bg-secondary px-3">Baru</span></td>
+<td>{{ tiket_baru }}</td>
+</tr>
+
+<tr>
+<td><span class="badge bg-warning text-dark px-3">Proses</span></td>
+<td>{{ tiket_proses }}</td>
+</tr>
+
+<tr>
+<td><span class="badge bg-success px-3">Selesai</span></td>
+<td>{{ tiket_selesai }}</td>
+</tr>
+
+<tr>
+<td><span class="badge bg-dark px-3">Ditutup</span></td>
+<td>{{ tiket_ditutup }}</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+
+<!-- ================= STOK ================= -->
+
+<div class="card shadow-sm mb-4">
+<div class="card-body">
+
+<h5 class="section-title">⚠ Stok Hampir Habis</h5>
+
+<ul class="list-group">
+
+{% for barang in alert_stok %}
+<li class="list-group-item d-flex justify-content-between align-items-center">
+{{ barang.nama_barang }}
+<span class="badge bg-danger rounded-pill">{{ barang.stok }}</span>
+</li>
+{% empty %}
+<li class="list-group-item text-success">✅ Stok Aman</li>
+{% endfor %}
+
+</ul>
+
+</div>
+</div>
+
+<!-- ================= JARINGAN ================= -->
+
+<div class="card shadow-sm mb-4">
+<div class="card-body">
+
+<h5 class="section-title">🌐 Status Jaringan</h5>
+
+<table class="table table-striped table-bordered text-center align-middle">
+<thead class="table-primary">
+<tr>
+<th>Perangkat</th>
+<th>IP</th>
+<th>Status</th>
+<th>Update</th>
+</tr>
+</thead>
+
+<tbody id="network-body">
+{% for d in perangkat_jaringan %}
+<tr>
+<td>{{ d.nama }}</td>
+<td>{{ d.ip_address }}</td>
+<td>
+<span class="badge {% if d.last_status == 'up' %}bg-success{% else %}bg-danger{% endif %}">
+{{ d.last_status|upper }}
+</span>
+</td>
+<td>{{ d.last_checked|date:"H:i:s" }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+</div>
+</div>
+
+<!-- ================= AUTO REFRESH ================= -->
+
+<script>
+function refreshJaringan(){
+ fetch('/realtime/')
+ .then(r=>r.json())
+ .then(data=>{
+   let html="";
+   data.devices.forEach(d=>{
+     html+=`
+     <tr>
+       <td>${d.nama}</td>
+       <td>${d.ip}</td>
+       <td>
+         <span class="badge ${d.status=='up'?'bg-success':'bg-danger'}">
+           ${d.status.toUpperCase()}
+         </span>
+       </td>
+       <td>${d.last_checked}</td>
+     </tr>`;
+   });
+   document.getElementById("network-body").innerHTML = html;
+ });
+}
+
+setInterval(refreshJaringan,30000);
+</script>
+
+{% endblock %}

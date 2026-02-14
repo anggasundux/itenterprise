@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h4>👨‍🔧 Assign Petugas IT</h4>
+
+<p><strong>{{ tiket.judul }}</strong></p>
+
+<form method="POST">
+{% csrf_token %}
+
+<select name="petugas" class="form-control mb-3" required>
+<option value="">-- Pilih Petugas --</option>
+
+{% for u in petugas_list %}
+<option value="{{ u.id }}"
+{% if tiket.petugas and tiket.petugas.id == u.id %}selected{% endif %}
+>
+{{ u.username }}
+</option>
+{% endfor %}
+</select>
+
+<button class="btn btn-success">💾 Simpan</button>
+<a href="{% url 'tiket_list' %}" class="btn btn-secondary">Kembali</a>
+
+</form>
+
+{% endblock %}

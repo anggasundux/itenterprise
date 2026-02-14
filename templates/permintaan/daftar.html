@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>📦 Daftar Permintaan Barang IT</h2>
+
+<div class="section">
+
+<table>
+<thead>
+<tr>
+    <th>Barang</th>
+    <th>Jumlah</th>
+    <th>Peminta</th>
+    <th>Status</th>
+    <th>Aksi</th>
+</tr>
+</thead>
+
+<tbody>
+{% for p in permintaan_list %}
+<tr>
+    <td>{{ p.barang.nama_barang }}</td>
+    <td>{{ p.jumlah }}</td>
+    <td>{{ p.peminta.username }}</td>
+    <td>
+        {% if p.status == "pending" %}
+            ⏳ Pending
+        {% elif p.status == "approved" %}
+            ✅ Approved
+        {% elif p.status == "delivered" %}
+            📦 Dikirim
+        {% else %}
+            ❌ Ditolak
+        {% endif %}
+    </td>
+
+    <td>
+
+        {% if p.status == "pending" %}
+            <a href="{% url 'approve_permintaan' p.id %}">Approve</a>
+
+        {% elif p.status == "approved" %}
+            <a href="{% url 'kirim_barang' p.id %}">Kirim Barang</a>
+
+        {% else %}
+            -
+
+        {% endif %}
+
+    </td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="5">Belum ada permintaan</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+</div>
+
+{% endblock %}
