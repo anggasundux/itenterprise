@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Rekap Mutasi Bulanan{% endblock %}
+
+{% block content %}
+<div style="padding:20px;">
+    <h1 style="margin-bottom:20px;">📊 Rekap Mutasi Aset Bulanan</h1>
+
+    <div style="background:white;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.05);overflow:hidden;">
+        <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;">
+                <thead>
+                    <tr style="background:#f3f4f6;">
+                        <th style="padding:12px;text-align:left;border-bottom:1px solid #e5e7eb;">Bulan</th>
+                        <th style="padding:12px;text-align:right;border-bottom:1px solid #e5e7eb;">Jumlah Mutasi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in mutasi_bulanan %}
+                    <tr style="border-bottom:1px solid #e5e7eb;">
+                        <td style="padding:12px;">
+                            {% if item.bulan %}
+                                {{ item.bulan|date:"F Y" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td style="padding:12px;text-align:right;"><strong>{{ item.total }}</strong></td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="2" style="padding:20px;text-align:center;color:#9ca3af;">Tidak ada data mutasi</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div style="margin-top:20px;">
+        <a href="{% url 'mutasi_list' %}" style="background:#3b82f6;color:white;padding:8px 16px;border-radius:6px;text-decoration:none;margin-right:10px;">Daftar Mutasi</a>
+        <a href="{% url 'inventaris_list' %}" style="background:#6b7280;color:white;padding:8px 16px;border-radius:6px;text-decoration:none;">Kembali</a>
+    </div>
+</div>
+{% endblock %}

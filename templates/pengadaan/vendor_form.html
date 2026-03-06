@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>{{ title }}</h3>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-success" type="submit">Simpan</button>
+    <a href="{% url 'pengadaan:list_vendor' %}" class="btn btn-secondary">Batal</a>
+</form>
+{% endblock %}

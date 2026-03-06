@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <div style="max-width: 700px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;">
+        <div style="background: #3b82f6; color: white; padding: 20px; font-weight: bold; font-size: 18px;">
+            {{ title }}
+        </div>
+        <div style="padding: 20px;">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 500;">{{ form.nomor_sppb.label }}</label>
+                    {{ form.nomor_sppb }}
+                    {% if form.nomor_sppb.errors %}
+                    <small style="color: #ef4444; display: block; margin-top: 5px;">{{ form.nomor_sppb.errors }}</small>
+                    {% endif %}
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 500;">{{ form.tanggal_sppb.label }}</label>
+                    {{ form.tanggal_sppb }}
+                    {% if form.tanggal_sppb.errors %}
+                    <small style="color: #ef4444; display: block; margin-top: 5px;">{{ form.tanggal_sppb.errors }}</small>
+                    {% endif %}
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 500;">{{ form.vendor.label }}</label>
+                    {{ form.vendor }}
+                    {% if form.vendor.errors %}
+                    <small style="color: #ef4444; display: block; margin-top: 5px;">{{ form.vendor.errors }}</small>
+                    {% endif %}
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 500;">{{ form.file_sppb.label }}</label>
+                    <div style="border: 2px dashed #d1d5db; border-radius: 6px; padding: 20px; text-align: center;">
+                        <i class="fa-solid fa-file-pdf" style="font-size: 32px; color: #9ca3af; margin-bottom: 10px; display: block;"></i>
+                        {{ form.file_sppb }}
+                        <p style="margin: 10px 0 0 0; color: #6b7280; font-size: 14px;">
+                            Klik untuk upload atau drag file di sini
+                        </p>
+                        <small style="color: #9ca3af;">Format: PDF, DOC, DOCX (Max 5MB)</small>
+                    </div>
+                    {% if form.file_sppb.errors %}
+                    <small style="color: #ef4444; display: block; margin-top: 5px;">{{ form.file_sppb.errors }}</small>
+                    {% endif %}
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 500;">{{ form.keterangan.label }}</label>
+                    {{ form.keterangan }}
+                    {% if form.keterangan.errors %}
+                    <small style="color: #ef4444; display: block; margin-top: 5px;">{{ form.keterangan.errors }}</small>
+                    {% endif %}
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 500;">{{ form.unit.label }}</label>
+                    {{ form.unit }}
+                    {% if form.unit.errors %}
+                    <small style="color: #ef4444; display: block; margin-top: 5px;">{{ form.unit.errors }}</small>
+                    {% endif %}
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" style="background: #3b82f6; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
+                        <i class="fa-solid fa-save"></i> Simpan
+                    </button>
+                    <a href="{% url 'pengadaan:list_sppb' %}" style="background: #6b7280; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center;">
+                        <i class="fa-solid fa-times"></i> Batal
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -5,15 +5,23 @@ from io import BytesIO
 from django.core.files import File
 
 class Aset(models.Model):
+    KONDISI_CHOICES = [
+        ('Baik', 'Baik'),
+        ('Rusak', 'Rusak'),
+        ('Maintenance', 'Maintenance'),
+        ('Baru', 'Baru'),
+    ]
+    
     kode_aset = models.CharField(max_length=50, unique=True)
     nama_aset = models.CharField(max_length=150)
     kategori = models.CharField(max_length=100)
     merek = models.CharField(max_length=100, blank=True)
     nomor_seri = models.CharField(max_length=100, blank=True)
     ruangan = models.ForeignKey(Ruangan, on_delete=models.SET_NULL, null=True)
-    kondisi = models.CharField(max_length=50)
+    kondisi = models.CharField(max_length=50, choices=KONDISI_CHOICES, default='Baik')
     tanggal_beli = models.DateField()
     keterangan = models.TextField(blank=True)
+    
 
     def __str__(self):
         return f"{self.kode_aset} - {self.nama_aset}"
@@ -48,3 +56,5 @@ class MutasiAset(models.Model):
 
     def __str__(self):
         return f"{self.aset.kode_aset} : {self.dari_ruangan} → {self.ke_ruangan}"
+
+

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="content-center">
+<div class="card shadow-sm">
+<div class="card-body">
+
+<h4 class="mb-4 text-center">
+➕ Tambah Perangkat ke Unit
+</h4>
+
+<form method="POST">
+{% csrf_token %}
+
+<!-- UNIT -->
+<div class="mb-3">
+<label>Unit</label>
+<input type="text" class="form-control"
+value="{{ unit.nama_unit }}" disabled>
+</div>
+
+<!-- JENIS -->
+<div class="mb-3">
+<label>Jenis</label>
+<select name="jenis" class="form-select" required>
+<option value="">-- Pilih --</option>
+<option value="monitor">Monitor</option>
+<option value="printer">Printer</option>
+<option value="keyboard">Keyboard</option>
+<option value="mouse">Mouse</option>
+<option value="scanner">Scanner</option>
+<option value="lainnya">Lainnya</option>
+</select>
+</div>
+
+<!-- ASET INVENTARIS -->
+<div class="mb-3">
+<label>Aset Inventaris (Optional)</label>
+<select name="aset" class="form-select">
+<option value="">-- Pilih dari Inventaris --</option>
+
+{% for a in aset_list %}
+<option value="{{ a.id }}">
+{{ a.kode_aset }} | {{ a.nama_aset }} | SN: {{ a.nomor_seri|default:"-" }}
+</option>
+{% endfor %}
+
+</select>
+</div>
+
+<div class="mb-3">
+<label>Merk</label>
+<input type="text" name="merk" class="form-control">
+</div>
+
+<div class="mb-3">
+<label>Nomor Seri</label>
+<input type="text" name="nomor_seri" class="form-control">
+</div>
+
+<div class="mb-3">
+<label>Keterangan</label>
+<textarea name="keterangan" class="form-control"></textarea>
+</div>
+
+<div class="d-flex justify-content-between">
+<button class="btn btn-success">💾 Simpan</button>
+<a href="{% url 'unit_detail' unit.id %}" class="btn btn-secondary">⬅ Kembali</a>
+</div>
+
+</form>
+
+</div>
+</div>
+</div>
+
+{% endblock %}

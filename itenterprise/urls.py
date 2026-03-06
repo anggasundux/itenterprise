@@ -26,6 +26,7 @@ urlpatterns = [
     path('permintaan/', include('permintaan.urls')),
     path('setup/', include('setup.urls')),
     path('unit/', include('unit.urls')),
+    path('pengadaan/', include('pengadaan.urls')),
 
 ]
 

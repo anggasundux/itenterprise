@@ -27,24 +27,24 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-   
-
-    'rest_framework',
-    'permintaan',
-    'unit',
+    
+    # Local apps
     'core_app',
     'dashboard',
-    'lokasi',
-    'inventaris',
-    'kegiatan',
-    'helpdesk',
-    'jaringan',
-    'pemeliharaan',
     'gudang',
+    'helpdesk',
+    'inventaris',
+    'jaringan',
+    'kegiatan',
     'laporan',
+    'lokasi',
+    'notifikasi',
+    'pembelian',
+    'pemeliharaan',
+    'pengadaan',  # ADD THIS
+    'permintaan',
     'setup',
-
-
+    'unit',
 ]
 
 MIDDLEWARE = [

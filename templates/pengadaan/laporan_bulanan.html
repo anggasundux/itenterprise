@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Laporan Pengadaan{% endblock %}
+
+{% block content %}
+<div style="padding:20px;">
+    <h1 style="margin-bottom:20px;">Laporan Pengadaan - {{ bulan }}</h1>
+
+    <!-- Filter & Summary -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:20px;">
+        <div style="background:white;border-radius:8px;padding:16px;box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+            <div style="font-size:24px;font-weight:bold;color:#3b82f6;">{{ total_sppb }}</div>
+            <div style="color:#6b7280;font-size:14px;">Total SPPB</div>
+        </div>
+        <div style="background:white;border-radius:8px;padding:16px;box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+            <div style="font-size:24px;font-weight:bold;color:#10b981;">{{ barang_datang }}</div>
+            <div style="color:#6b7280;font-size:14px;">Barang Datang</div>
+        </div>
+        <div style="background:white;border-radius:8px;padding:16px;box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+            <div style="font-size:24px;font-weight:bold;color:#06b6d4;">{{ barang_verified }}</div>
+            <div style="color:#6b7280;font-size:14px;">Diverifikasi</div>
+        </div>
+        <div style="background:white;border-radius:8px;padding:16px;box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+            <div style="font-size:24px;font-weight:bold;color:#8b5cf6;">{{ barang_masuk }}</div>
+            <div style="color:#6b7280;font-size:14px;">Masuk Inventaris</div>
+        </div>
+    </div>
+
+    <!-- Filter Bulan & Tahun -->
+    <div style="background:white;border-radius:8px;padding:16px;box-shadow:0 2px 4px rgba(0,0,0,0.05);margin-bottom:20px;">
+        <form method="get" style="display:flex;gap:10px;flex-wrap:wrap;">
+            <label style="display:flex;align-items:center;gap:8px;">
+                Tahun:
+                <input type="number" name="year" value="{{ year }}" style="padding:8px;border:1px solid #d1d5db;border-radius:6px;width:100px;">
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;">
+                Bulan:
+                <select name="month" style="padding:8px;border:1px solid #d1d5db;border-radius:6px;">
+                    {% for i in "123456789101112" %}
+                    <option value="{{ i }}" {% if month|stringformat:"d" == i %}selected{% endif %}>
+                        {% with month_names="Januari,Februari,Maret,April,Mei,Juni,Juli,Agustus,September,Oktober,November,Desember" %}
+                        {{ month_names|add:i|add:"-1"|stringslice:":"|first }}
+                        {% endwith %}
+                    </option>
+                    {% endfor %}
+                </select>
+            </label>
+            <button type="submit" style="background:#3b82f6;color:white;padding:8px 16px;border:none;border-radius:6px;cursor:pointer;">Filter</button>
+        </form>
+    </div>
+
+    <!-- SPPB Table -->
+    <div style="background:white;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.05);overflow:hidden;">
+        <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;">
+                <thead>
+                    <tr style="background:#f3f4f6;">
+                        <th style="padding:12px;text-align:left;border-bottom:1px solid #e5e7eb;">No. SPPB</th>
+                        <th style="padding:12px;text-align:left;border-bottom:1px solid #e5e7eb;">Tanggal</th>
+                        <th style="padding:12px;text-align:left;border-bottom:1px solid #e5e7eb;">Unit</th>
+                        <th style="padding:12px;text-align:right;border-bottom:1px solid #e5e7eb;">Total Nominal</th>
+                        <th style="padding:12px;text-align:left;border-bottom:1px solid #e5e7eb;">Status</th>
+                        <th style="padding:12px;text-align:left;border-bottom:1px solid #e5e7eb;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sppb in sppb_list %}
+                    <tr style="border-bottom:1px solid #e5e7eb;">
+                        <td style="padding:12px;"><strong>{{ sppb.nomor_sppb }}</strong></td>
+                        <td style="padding:12px;">{{ sppb.tanggal_sppb|date:"d-m-Y" }}</td>
+                        <td style="padding:12px;">{{ sppb.unit }}</td>
+                        <td style="padding:12px;text-align:right;">
+                            {% for detail in sppb.detail_barang.all %}
+                            {{ detail.total_harga }}
+                            {% endfor %}
+                        </td>
+                        <td style="padding:12px;">
+                            <span style="background:{% if sppb.status == 'masuk_inventaris' %}#10b981{% elif sppb.status == 'diverifikasi' %}#06b6d4{% elif sppb.status == 'datang' %}#f59e0b{% else %}#6b7280{% endif %};color:white;padding:4px 8px;border-radius:4px;font-size:12px;">
+                                {{ sppb.get_status_display }}
+                            </span>
+                        </td>
+                        <td style="padding:12px;">
+                            <a href="{% url 'pengadaan:detail_sppb' sppb.pk %}" style="color:#3b82f6;text-decoration:none;">Detail</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" style="padding:20px;text-align:center;color:#9ca3af;">Tidak ada data</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div style="margin-top:20px;text-align:right;">
+        <a href="{% url 'pengadaan:dashboard' %}" style="background:#6b7280;color:white;padding:8px 16px;border-radius:6px;text-decoration:none;">Kembali</a>
+    </div>
+</div>
+{% endblock %}

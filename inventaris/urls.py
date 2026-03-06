@@ -15,7 +15,7 @@ urlpatterns = [
     path('rekap-ruangan/', views.rekap_ruangan, name='rekap_ruangan'),
     path('grafik/', views.grafik_dashboard, name='grafik_dashboard'),
     path('mutasi-list/', views.mutasi_list, name='mutasi_list'),
-
-
+    path('rekap-mutasi-bulanan/', views.rekap_mutasi_bulanan, name='rekap_mutasi_bulanan'),
+    path('aset-rusak/', views.total_aset_rusak, name='aset_rusak'),
 
 ]

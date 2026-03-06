@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Daftar SPPB{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <h1 style="margin-bottom: 20px;">Daftar SPPB</h1>
+
+    <!-- Filter -->
+    <div style="background: white; border-radius: 8px; padding: 15px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <form method="get" style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <label style="display: flex; align-items: center; gap: 8px;">
+                Filter Status:
+                <select name="status" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 6px;">
+                    <option value="">-- Semua Status --</option>
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </label>
+            <button type="submit" style="background: #3b82f6; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;">
+                Filter
+            </button>
+            <a href="{% url 'pengadaan:create_sppb' %}" style="background: #10b981; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-plus"></i> SPPB Baru
+            </a>
+        </form>
+    </div>
+
+    <!-- Table -->
+    <div style="background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;">
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f3f4f6;">
+                        <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e5e7eb;">No. SPPB</th>
+                        <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e5e7eb;">Tanggal</th>
+                        <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e5e7eb;">Unit</th>
+                        <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e5e7eb;">Status</th>
+                        <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e5e7eb;">Dibuat</th>
+                        <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e5e7eb;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sppb in sppb_list %}
+                    <tr style="border-bottom: 1px solid #e5e7eb;">
+                        <td style="padding: 12px;"><strong>{{ sppb.nomor_sppb }}</strong></td>
+                        <td style="padding: 12px;">{{ sppb.tanggal_sppb|date:"d-m-Y" }}</td>
+                        <td style="padding: 12px;">{{ sppb.unit }}</td>
+                        <td style="padding: 12px;">
+                            <span style="background: {% if sppb.status == 'masuk_inventaris' %}#10b981{% elif sppb.status == 'diverifikasi' %}#06b6d4{% elif sppb.status == 'datang' %}#f59e0b{% else %}#6b7280{% endif %}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                {{ sppb.get_status_display }}
+                            </span>
+                        </td>
+                        <td style="padding: 12px;">{{ sppb.created_at|date:"d-m-Y H:i" }}</td>
+                        <td style="padding: 12px;">
+                            <a href="{% url 'pengadaan:detail_sppb' sppb.pk %}" style="color: #3b82f6; text-decoration: none;">Detail</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" style="padding: 20px; text-align: center; color: #9ca3af;">Tidak ada data</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,29 +1,61 @@
 {% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
 {% block content %}
+<div style="padding:20px;">
+    <div style="max-width:600px;margin:0 auto;background:white;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.05);overflow:hidden;">
+        <div style="background:#3b82f6;color:white;padding:16px;font-weight:bold;font-size:18px;">
+            {{ title }}
+        </div>
+        <div style="padding:20px;">
+            <p style="margin-bottom:10px;">
+                <strong>Aset:</strong> {{ aset.kode_aset }} - {{ aset.nama_aset }}
+            </p>
+            <p style="margin-bottom:20px;">
+                <strong>Ruangan saat ini:</strong> <span style="color:#3b82f6;font-weight:bold;">{{ aset.ruangan }}</span>
+            </p>
 
-<h3>🔄 Mutasi Aset</h3>
+            <form method="post">
+                {% csrf_token %}
+                
+                <div style="margin-bottom:15px;">
+                    <label style="display:block;margin-bottom:5px;font-weight:500;">
+                        {{ form.ke_ruangan.label }} <span style="color:#ef4444;">*</span>
+                    </label>
+                    {{ form.ke_ruangan }}
+                    {% if form.ke_ruangan.errors %}
+                    <small style="color:#ef4444;display:block;margin-top:3px;">{{ form.ke_ruangan.errors.0 }}</small>
+                    {% endif %}
+                </div>
 
-<p><b>{{ aset.kode_aset }}</b> - {{ aset.nama_aset }}</p>
-<p>Ruangan sekarang: <b>{{ aset.ruangan }}</b></p>
-
-<form method="POST">
-{% csrf_token %}
-
-<div class="mb-3">
-<label>Pindah ke Ruangan</label>
-<select name="ruangan" class="form-control" required>
-<option value="">-- Pilih Ruangan --</option>
-
-{% for r in ruangan_list %}
-<option value="{{ r.id }}">{{ r }}</option>
-{% endfor %}
-
-</select>
+                <div style="display:flex;gap:10px;margin-top:20px;">
+                    <button type="submit" style="background:#10b981;color:white;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:500;">
+                        ✅ Proses Mutasi
+                    </button>
+                    <a href="{% url 'inventaris_list' %}" style="background:#6b7280;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-flex;align-items:center;">
+                        ⬅ Batal
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
-<button class="btn btn-primary">Proses Mutasi</button>
-<a href="{% url 'inventaris_list' %}" class="btn btn-secondary">Batal</a>
+<style>
+form select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+}
 
-</form>
-
+form select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+</style>
 {% endblock %}

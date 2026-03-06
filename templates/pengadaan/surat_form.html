@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">{{ title }}</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="form-group">
+                            <label for="{{ form.nomor_surat.id_for_label }}">{{ form.nomor_surat.label }}</label>
+                            {{ form.nomor_surat }}
+                            {% if form.nomor_surat.errors %}
+                            <small class="text-danger">{{ form.nomor_surat.errors }}</small>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.unit.id_for_label }}">{{ form.unit.label }}</label>
+                            {{ form.unit }}
+                            {% if form.unit.errors %}
+                            <small class="text-danger">{{ form.unit.errors }}</small>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.catatan.id_for_label }}">{{ form.catatan.label }}</label>
+                            {{ form.catatan }}
+                            {% if form.catatan.errors %}
+                            <small class="text-danger">{{ form.catatan.errors }}</small>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                            <a href="{% url 'pengadaan:list_surat' %}" class="btn btn-secondary">Batal</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

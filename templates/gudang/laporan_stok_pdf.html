@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+
+<style>
+
+body{
+font-family: Arial, sans-serif;
+font-size: 12px;
+}
+
+.header{
+text-align:center;
+margin-bottom:20px;
+}
+
+h2{
+margin:0;
+}
+
+.tanggal{
+font-size:11px;
+margin-top:5px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+}
+
+table, th, td{
+border:1px solid #000;
+}
+
+th{
+background:#eeeeee;
+}
+
+th,td{
+padding:6px;
+text-align:center;
+}
+
+.left{
+text-align:left;
+}
+
+.status-aman{
+color:green;
+font-weight:bold;
+}
+
+.status-minim{
+color:red;
+font-weight:bold;
+}
+
+.footer{
+margin-top:30px;
+font-size:11px;
+text-align:right;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+<h2>LAPORAN STOK GUDANG</h2>
+<div class="tanggal">
+Dicetak : {% now "d M Y H:i" %}
+</div>
+</div>
+
+<table>
+
+<tr>
+<th width="5%">No</th>
+<th width="30%">Nama Barang</th>
+<th width="15%">Kategori</th>
+<th width="10%">Stok</th>
+<th width="10%">Satuan</th>
+<th width="20%">Gudang</th>
+<th width="10%">Status</th>
+</tr>
+
+{% for b in data %}
+<tr>
+
+<td>{{ forloop.counter }}</td>
+
+<td class="left">
+{{ b.nama_barang }}
+</td>
+
+<td>
+{{ b.kategori }}
+</td>
+
+<td>
+{{ b.stok }}
+</td>
+
+<td>
+{{ b.satuan }}
+</td>
+
+<td>
+{{ b.gudang.nama }}
+</td>
+
+<td>
+
+{% if b.stok <= b.batas_minimum %}
+<span class="status-minim">
+MINIM
+</span>
+{% else %}
+<span class="status-aman">
+AMAN
+</span>
+{% endif %}
+
+</td>
+
+</tr>
+{% endfor %}
+
+</table>
+
+<div class="footer">
+Laporan Sistem Gudang IT
+</div>
+
+</body>
+</html>

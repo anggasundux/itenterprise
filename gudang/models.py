@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-from lokasi.models import Ruangan   # 👉 ambil model ruangan
+from lokasi.models import Ruangan
+
 
 # =====================
 # GUDANG
@@ -21,12 +22,10 @@ class Gudang(models.Model):
 
 class Consumable(models.Model):
     nama_barang = models.CharField(max_length=150)
-    kategori = models.CharField(max_length=100)   # toner, tinta, kabel dll
+    kategori = models.CharField(max_length=100, null=True, blank=True)
+    satuan = models.CharField(max_length=50, null=True, blank=True)
     stok = models.IntegerField(default=0)
-    satuan = models.CharField(max_length=50)      # pcs, box, liter
-
     gudang = models.ForeignKey(Gudang, on_delete=models.CASCADE)
-
     batas_minimum = models.IntegerField(default=5)
 
     def __str__(self):
@@ -39,9 +38,11 @@ class Consumable(models.Model):
 
 class PengeluaranConsumable(models.Model):
 
-    barang = models.ForeignKey(Consumable, on_delete=models.CASCADE)
+    barang = models.ForeignKey(
+        Consumable,
+        on_delete=models.CASCADE
+    )
 
-    # 👉 RUANGAN TUJUAN
     ruangan = models.ForeignKey(
         Ruangan,
         on_delete=models.SET_NULL,
@@ -61,7 +62,7 @@ class PengeluaranConsumable(models.Model):
     keterangan = models.TextField(blank=True)
 
     def __str__(self):
-        return f"{self.barang.nama_barang} - {self.jumlah} ke {self.ruangan}"
+        return f"{self.barang.nama_barang} - {self.jumlah}"
 
     # =====================
     # UPDATE STOK OTOMATIS
@@ -75,11 +76,9 @@ class PengeluaranConsumable(models.Model):
         else:
             selisih = self.jumlah
 
-        # CEK STOK CUKUP
         if self.barang.stok - selisih < 0:
             raise ValueError("Stok tidak mencukupi!")
 
-        # UPDATE STOK
         self.barang.stok -= selisih
         self.barang.save()
 
@@ -87,7 +86,6 @@ class PengeluaranConsumable(models.Model):
 
     def delete(self, *args, **kwargs):
 
-        # BALIKIN STOK SAAT HAPUS
         self.barang.stok += self.jumlah
         self.barang.save()
 

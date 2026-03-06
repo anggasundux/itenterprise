@@ -2,7 +2,6 @@
 {% block content %}
 
 <div class="content-center">
-
 <div class="card shadow-sm">
 <div class="card-body">
 
@@ -11,9 +10,38 @@
 Unit Komputer
 </h4>
 
+{% if error %}
+<div class="alert alert-danger">
+    {{ error }}
+</div>
+{% endif %}
+
 <form method="POST">
 {% csrf_token %}
 
+<!-- ================= CPU DARI INVENTARIS ================= -->
+<div class="mb-3">
+<label><strong>CPU (Dari Inventaris)</strong></label>
+<select name="aset" class="form-select">
+    <option value="">-- Pilih CPU dari Inventaris --</option>
+
+    {% for a in aset_list %}
+    <option value="{{ a.id }}"
+        {% if unit and unit.aset and unit.aset.id == a.id %}selected{% endif %}>
+        {{ a.kode_aset }} |
+        {{ a.nama_aset }} |
+        SN: {{ a.nomor_seri|default:"-" }} |
+        {{ a.ruangan.nama|default:"-" }}
+    </option>
+    {% endfor %}
+
+</select>
+<small class="text-muted">
+Menampilkan: Kode | Nama | Nomor Seri | Ruangan
+</small>
+</div>
+
+<!-- ================= NAMA UNIT ================= -->
 <div class="mb-3">
 <label>Nama Unit</label>
 <input type="text" name="nama_unit"
@@ -42,66 +70,79 @@ class="form-control"
 value="{{ unit.mac_address|default:'' }}">
 </div>
 
+<!-- ================= RUANGAN ================= -->
 <div class="mb-3">
 <label>Ruangan</label>
 <select name="ruangan" class="form-select">
+<option value="">-- Pilih Ruangan --</option>
+
 {% for r in ruangan_list %}
 <option value="{{ r.id }}"
-{% if unit.ruangan.id == r.id %}selected{% endif %}>
+{% if unit and unit.ruangan and unit.ruangan.id == r.id %}selected{% endif %}>
 {{ r.nama }}
 </option>
 {% endfor %}
+
 </select>
 </div>
 
+<!-- ================= PENGGUNA ================= -->
 <div class="mb-3">
 <label>Pengguna</label>
 <select name="pengguna" class="form-select">
 <option value="">-- Tidak ada --</option>
+
 {% for u in user_list %}
 <option value="{{ u.id }}"
-{% if unit.pengguna.id == u.id %}selected{% endif %}>
+{% if unit and unit.pengguna and unit.pengguna.id == u.id %}selected{% endif %}>
 {{ u.username }}
 </option>
 {% endfor %}
+
 </select>
 </div>
 
+<!-- ================= TERHUBUNG KE ================= -->
 <div class="mb-3">
-<label>Terhubung ke</label>
+<label>Terhubung ke (Switch / Router)</label>
 <select name="terhubung_ke" class="form-select">
 <option value="">-- Tidak ada --</option>
+
 {% for p in perangkat_list %}
 <option value="{{ p.id }}"
-{% if unit.terhubung_ke.id == p.id %}selected{% endif %}>
+{% if unit and unit.terhubung_ke and unit.terhubung_ke.id == p.id %}selected{% endif %}>
 {{ p.nama }}
 </option>
 {% endfor %}
+
 </select>
 </div>
 
+<!-- ================= STATUS ================= -->
 <div class="mb-3">
 <label>Status</label>
 <select name="status" class="form-select">
+
 <option value="aktif"
-{% if unit.status == 'aktif' %}selected{% endif %}>
+{% if unit and unit.status == 'aktif' %}selected{% endif %}>
 Aktif
 </option>
 
 <option value="maintenance"
-{% if unit.status == 'maintenance' %}selected{% endif %}>
+{% if unit and unit.status == 'maintenance' %}selected{% endif %}>
 Maintenance
 </option>
 
 <option value="rusak"
-{% if unit.status == 'rusak' %}selected{% endif %}>
+{% if unit and unit.status == 'rusak' %}selected{% endif %}>
 Rusak
 </option>
 
 <option value="nonaktif"
-{% if unit.status == 'nonaktif' %}selected{% endif %}>
+{% if unit and unit.status == 'nonaktif' %}selected{% endif %}>
 Non Aktif
 </option>
+
 </select>
 </div>
 
@@ -120,7 +161,6 @@ rows="3">{{ unit.spesifikasi|default:'' }}</textarea>
 </div>
 
 <div class="d-flex justify-content-between">
-
 <button class="btn btn-success px-4">
 💾 Simpan
 </button>
@@ -129,14 +169,11 @@ rows="3">{{ unit.spesifikasi|default:'' }}</textarea>
 class="btn btn-secondary px-4">
 ⬅ Kembali
 </a>
-
 </div>
 
 </form>
-
 </div>
 </div>
-
 </div>
 
 {% endblock %}

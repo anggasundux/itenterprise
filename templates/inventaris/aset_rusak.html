@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Aset Rusak{% endblock %}
+
+{% block content %}
+<div style="padding:20px;">
+    <h1 style="margin-bottom:20px;">📋 Daftar Aset Rusak</h1>
+
+    <div style="background:white;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.05);padding:16px;margin-bottom:20px;">
+        <div style="font-size:32px;font-weight:bold;color:#ef4444;">{{ aset_rusak }}</div>
+        <div style="color:#6b7280;font-size:14px;">Total Aset Rusak</div>
+    </div>
+
+    {% if aset_rusak_list %}
+    <div style="background:white;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.05);overflow:hidden;">
+        <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;">
+                <thead>
+                    <tr style="background:#f3f4f6;">
+                        <th style="padding:12px;text-align:left;border-bottom:1px solid #e5e7eb;">Kode Aset</th>
+                        <th style="padding:12px;text-align:left;border-bottom:1px solid #e5e7eb;">Nama Aset</th>
+                        <th style="padding:12px;text-align:left;border-bottom:1px solid #e5e7eb;">Kategori</th>
+                        <th style="padding:12px;text-align:left;border-bottom:1px solid #e5e7eb;">Ruangan</th>
+                        <th style="padding:12px;text-align:left;border-bottom:1px solid #e5e7eb;">Tanggal Beli</th>
+                        <th style="padding:12px;text-align:left;border-bottom:1px solid #e5e7eb;">Keterangan</th>
+                        <th style="padding:12px;text-align:left;border-bottom:1px solid #e5e7eb;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for aset in aset_rusak_list %}
+                    <tr style="border-bottom:1px solid #e5e7eb;">
+                        <td style="padding:12px;"><strong>{{ aset.kode_aset }}</strong></td>
+                        <td style="padding:12px;">{{ aset.nama_aset }}</td>
+                        <td style="padding:12px;">{{ aset.kategori }}</td>
+                        <td style="padding:12px;">{{ aset.ruangan }}</td>
+                        <td style="padding:12px;">{{ aset.tanggal_beli|date:"d-m-Y" }}</td>
+                        <td style="padding:12px;">{{ aset.keterangan|truncatewords:10 }}</td>
+                        <td style="padding:12px;">
+                            <a href="{% url 'inventaris_edit' aset.id %}" style="color:#3b82f6;text-decoration:none;margin-right:10px;">Edit</a>
+                            <a href="{% url 'aset_detail' aset.kode_aset %}" style="color:#10b981;text-decoration:none;">Detail</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div style="background:white;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.05);padding:20px;text-align:center;color:#9ca3af;">
+        <p>Tidak ada aset rusak</p>
+    </div>
+    {% endif %}
+
+    <div style="margin-top:20px;">
+        <a href="{% url 'inventaris_list' %}" style="background:#6b7280;color:white;padding:8px 16px;border-radius:6px;text-decoration:none;">Kembali</a>
+    </div>
+</div>
+{% endblock %}

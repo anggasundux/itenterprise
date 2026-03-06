@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h3>💻 Manajemen Unit Komputer</h3>
-<!-- ===== DASHBOARD SUMMARY ===== -->
+<h3 class="mb-4">💻 Manajemen Unit Komputer</h3>
 
+<!-- ===== DASHBOARD SUMMARY ===== -->
 <div class="row mb-4">
 
 <div class="col-md-3">
 <div class="card text-white bg-primary shadow-sm">
 <div class="card-body text-center">
-<h5>Total Unit</h5>
+<h6>Total Unit</h6>
 <h3>{{ total }}</h3>
 </div>
 </div>
@@ -18,16 +18,16 @@
 <div class="col-md-3">
 <div class="card text-white bg-success shadow-sm">
 <div class="card-body text-center">
-<h5>Aktif</h5>
+<h6>Aktif</h6>
 <h3>{{ aktif }}</h3>
 </div>
 </div>
 </div>
 
 <div class="col-md-3">
-<div class="card text-white bg-warning shadow-sm">
+<div class="card text-dark bg-warning shadow-sm">
 <div class="card-body text-center">
-<h5>Maintenance</h5>
+<h6>Maintenance</h6>
 <h3>{{ maintenance }}</h3>
 </div>
 </div>
@@ -36,7 +36,7 @@
 <div class="col-md-3">
 <div class="card text-white bg-danger shadow-sm">
 <div class="card-body text-center">
-<h5>Rusak</h5>
+<h6>Rusak</h6>
 <h3>{{ rusak }}</h3>
 </div>
 </div>
@@ -45,7 +45,7 @@
 <div class="col-md-3 mt-3">
 <div class="card text-white bg-dark shadow-sm">
 <div class="card-body text-center">
-<h5>Nonaktif</h5>
+<h6>Nonaktif</h6>
 <h3>{{ nonaktif }}</h3>
 </div>
 </div>
@@ -53,55 +53,127 @@
 
 </div>
 
+<div class="mb-3">
+<form method="get" class="row g-2 align-items-center">
+  <div class="col-auto">
+    <input type="text" name="q" value="{{ search_query|default:'' }}" class="form-control" placeholder="Cari nama / IP">
+  </div>
+  <div class="col-auto">
+    <select name="status" class="form-select">
+      <option value="">Semua status</option>
+      <option value="aktif" {% if filter_status == 'aktif' %}selected{% endif %}>Aktif</option>
+      <option value="maintenance" {% if filter_status == 'maintenance' %}selected{% endif %}>Maintenance</option>
+      <option value="rusak" {% if filter_status == 'rusak' %}selected{% endif %}>Rusak</option>
+      <option value="nonaktif" {% if filter_status == 'nonaktif' %}selected{% endif %}>Nonaktif</option>
+    </select>
+  </div>
+  <div class="col-auto">
+    <button type="submit" class="btn btn-outline-primary">Filter</button>
+  </div>
+</form>
+</div>
 
-<a href="{% url 'unit_add' %}" class="btn btn-primary mb-3">
+<div class="mb-3">
+<a href="{% url 'unit_add' %}" class="btn btn-primary">
 ➕ Tambah Unit
 </a>
-<a href="{% url 'unit_export_excel' %}" 
-   class="btn btn-success mb-3">
-   📥 Export Excel
+
+<a href="{% url 'export_unit_excel' %}"
+   class="btn btn-success">
+📥 Export Excel
 </a>
+</div>
 
-
-<table class="table table-bordered table-striped">
+<table class="table table-bordered table-striped align-middle">
 <thead class="table-primary text-center">
 <tr>
 <th>Nama</th>
+<th>CPU</th>
 <th>IP</th>
 <th>MAC</th>
 <th>Ruangan</th>
 <th>Pengguna</th>
 <th>Switch</th>
 <th>Status</th>
-<th>Aksi</th>
+<th width="160">Aksi</th>
 </tr>
 </thead>
 
 <tbody>
 {% for u in data %}
 <tr>
-<td>{{ u.nama_unit }}</td>
-<td>{{ u.ip_address }}</td>
-<td>{{ u.mac_address|default:"-" }}</td>
-<td>{{ u.ruangan|default:"-" }}</td>
-<td>{{ u.pengguna.username|default:"-" }}</td>
-<td>{{ u.terhubung_ke|default:"-" }}</td>
-<td>{{ u.status }}</td>
 
 <td>
+<strong>
+<a href="{% url 'unit_detail' u.id %}" class="text-decoration-none">
+{{ u.nama_unit }}
+</a>
+</strong><br>
+<small class="text-muted">{{ u.hostname|default:"-" }}</small>
+</td>
+
+<td>
+{% if u.aset %}
+{{ u.aset.kode_aset }} - {{ u.aset.nama_aset }}
+{% else %}
+-
+{% endif %}
+</td>
+
+<td>{{ u.ip_address }}</td>
+
+<td>{{ u.mac_address|default:"-" }}</td>
+
+<td>{{ u.ruangan.nama|default:"-" }}</td>
+
+<td>
+{% if u.pengguna %}
+{{ u.pengguna.username }}
+{% else %}
+-
+{% endif %}
+</td>
+
+<td>
+{% if u.terhubung_ke %}
+{{ u.terhubung_ke.nama }}
+{% else %}
+-
+{% endif %}
+</td>
+
+<td class="text-center">
+{% if u.status == 'aktif' %}
+<span class="badge bg-success">Aktif</span>
+{% elif u.status == 'maintenance' %}
+<span class="badge bg-warning text-dark">Maintenance</span>
+{% elif u.status == 'rusak' %}
+<span class="badge bg-danger">Rusak</span>
+{% elif u.status == 'nonaktif' %}
+<span class="badge bg-dark">Nonaktif</span>
+{% endif %}
+</td>
+
+<td class="text-center">
+
 <a href="{% url 'unit_edit' u.id %}"
-class="btn btn-warning btn-sm">Edit</a>
+class="btn btn-warning btn-sm mb-1">
+Edit
+</a>
 
 <a href="{% url 'unit_delete' u.id %}"
 class="btn btn-danger btn-sm"
 onclick="return confirm('Hapus unit ini?')">
 Hapus
 </a>
+
 </td>
+
 </tr>
+
 {% empty %}
 <tr>
-<td colspan="8" class="text-center text-muted">
+<td colspan="9" class="text-center text-muted">
 Belum ada data
 </td>
 </tr>
@@ -110,14 +182,15 @@ Belum ada data
 </table>
 
 <!-- PAGINATION -->
-
 <nav>
 <ul class="pagination justify-content-center">
 
 {% if data.has_previous %}
 <li class="page-item">
 <a class="page-link"
-href="?page={{ data.previous_page_number }}">Prev</a>
+href="?page={{ data.previous_page_number }}">
+Prev
+</a>
 </li>
 {% endif %}
 
@@ -128,7 +201,9 @@ href="?page={{ data.previous_page_number }}">Prev</a>
 {% if data.has_next %}
 <li class="page-item">
 <a class="page-link"
-href="?page={{ data.next_page_number }}">Next</a>
+href="?page={{ data.next_page_number }}">
+Next
+</a>
 </li>
 {% endif %}
 

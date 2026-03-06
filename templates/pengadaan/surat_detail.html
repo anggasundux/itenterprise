@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Detail Surat Pengajuan{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1>{{ surat.nomor_surat }}</h1>
+            <p class="text-muted">
+                Dibuat: {{ surat.created_at|date:"d-m-Y H:i" }} oleh {{ surat.created_by }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Info Card -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <strong>Unit:</strong> {{ surat.unit }}
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Status:</strong>
+                            <span class="badge badge-{% if surat.status == 'disetujui' %}success{% elif surat.status == 'ditolak' %}danger{% else %}warning{% endif %}">
+                                {{ surat.get_status_display }}
+                            </span>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Tanggal:</strong> {{ surat.tanggal_pengajuan|date:"d-m-Y" }}
+                        </div>
+                    </div>
+                    {% if surat.catatan %}
+                    <hr>
+                    <strong>Catatan:</strong> {{ surat.catatan }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <a href="{% url 'pengadaan:add_detail' surat.pk %}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Tambah Barang
+            </a>
+            <a href="{% url 'pengadaan:list_surat' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </a>
+        </div>
+    </div>
+
+    <!-- Detail Pembelian Table -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Detail Barang Pembelian</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Nama Barang</th>
+                                <th>Jumlah</th>
+                                <th>Harga Satuan</th>
+                                <th>Total</th>
+                                <th>Vendor</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for detail in detail_list %}
+                            <tr>
+                                <td>
+                                    <strong>{{ detail.nama_barang }}</strong>
+                                    {% if detail.spesifikasi %}
+                                    <br><small class="text-muted">{{ detail.spesifikasi }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>{{ detail.jumlah }} {{ detail.satuan }}</td>
+                                <td>Rp {{ detail.harga_satuan|floatformat:0 }}</td>
+                                <td><strong>Rp {{ detail.total_harga|floatformat:0 }}</strong></td>
+                                <td>{{ detail.vendor.nama|default:"-" }}</td>
+                                <td>
+                                    <span class="badge badge-{% if detail.status == 'masuk_inventaris' %}success{% elif detail.status == 'diverifikasi' %}info{% elif detail.status == 'datang' %}warning{% else %}secondary{% endif %}">
+                                        {{ detail.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{% url 'pengadaan:update_status' detail.pk %}" class="btn btn-sm btn-primary">
+                                        Update
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center py-4">Belum ada barang</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer bg-light">
+                    <strong>Total Nominal:</strong> Rp {{ total_nominal|floatformat:0 }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

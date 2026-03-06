@@ -1,92 +1,114 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import IntegrityError
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.db.models.functions import TruncMonth
 from django.http import HttpResponse
 from django.template.loader import get_template
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.conf import settings
 
 from xhtml2pdf import pisa
 
 from .models import Aset, MutasiAset
+from .forms import AsetForm, MutasiForm
 from lokasi.models import Ruangan
 
 
 # ================= LIST =================
 
+@login_required
 def inventaris_list(request):
     data = Aset.objects.select_related('ruangan').all()
+    
+    # Search by kode or nama
+    search = request.GET.get('search', '')
+    if search:
+        data = data.filter(Q(kode_aset__icontains=search) | Q(nama_aset__icontains=search))
+    
+    # Filter by ruangan
+    ruangan_filter = request.GET.get('ruangan', '')
+    if ruangan_filter:
+        data = data.filter(ruangan__id=ruangan_filter)
+    
+    # Filter by kondisi
+    kondisi_filter = request.GET.get('kondisi', '')
+    if kondisi_filter:
+        data = data.filter(kondisi=kondisi_filter)
+    
+    ruangan_list = Ruangan.objects.all()
+    
     return render(request, 'inventaris/list.html', {
-        'data': data
+        'data': data,
+        'ruangan_list': ruangan_list,
+        'search': search,
+        'ruangan_filter': ruangan_filter,
+        'kondisi_filter': kondisi_filter,
     })
 
 
 # ================= TAMBAH =================
 
+@login_required
 def inventaris_add(request):
-    ruangan_list = Ruangan.objects.all()
-
     if request.method == "POST":
-        try:
-            Aset.objects.create(
-                kode_aset=request.POST['kode_aset'],
-                nama_aset=request.POST['nama_aset'],
-                kategori=request.POST['kategori'],
-                merek=request.POST['merek'],
-                nomor_seri=request.POST['nomor_seri'],
-                ruangan_id=request.POST['ruangan'],
-                kondisi=request.POST['kondisi'],
-                tanggal_beli=request.POST['tanggal_beli'],
-                keterangan=request.POST['keterangan'],
-            )
-            return redirect('inventaris_list')
-
-        except IntegrityError:
-            return render(request, 'inventaris/form.html', {
-                'ruangan_list': ruangan_list,
-                'error': 'Kode aset sudah ada!'
-            })
+        form = AsetForm(request.POST)
+        if form.is_valid():
+            try:
+                form.save()
+                messages.success(request, f'Aset {form.cleaned_data["kode_aset"]} berhasil ditambahkan!')
+                return redirect('inventaris_list')
+            except IntegrityError:
+                messages.error(request, 'Kode aset sudah ada!')
+        else:
+            messages.error(request, 'Form tidak valid!')
+    else:
+        form = AsetForm()
 
     return render(request, 'inventaris/form.html', {
-        'ruangan_list': ruangan_list
+        'form': form,
+        'title': 'Tambah Aset Baru'
     })
 
 
 # ================= EDIT =================
 
+@login_required
 def inventaris_edit(request, id):
     aset = get_object_or_404(Aset, id=id)
-    ruangan_list = Ruangan.objects.all()
 
     if request.method == "POST":
-        aset.kode_aset = request.POST['kode_aset']
-        aset.nama_aset = request.POST['nama_aset']
-        aset.kategori = request.POST['kategori']
-        aset.merek = request.POST['merek']
-        aset.nomor_seri = request.POST['nomor_seri']
-        aset.ruangan_id = request.POST['ruangan']
-        aset.kondisi = request.POST['kondisi']
-        aset.tanggal_beli = request.POST['tanggal_beli']
-        aset.keterangan = request.POST['keterangan']
-        aset.save()
-
-        return redirect('inventaris_list')
+        form = AsetForm(request.POST, instance=aset)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Aset {aset.kode_aset} berhasil diperbarui!')
+            return redirect('inventaris_list')
+        else:
+            messages.error(request, 'Form tidak valid!')
+    else:
+        form = AsetForm(instance=aset)
 
     return render(request, 'inventaris/form.html', {
-        'aset': aset,
-        'ruangan_list': ruangan_list
+        'form': form,
+        'title': f'Edit Aset {aset.kode_aset}',
+        'aset': aset
     })
 
 
 # ================= HAPUS =================
 
+@login_required
 def inventaris_delete(request, id):
     aset = get_object_or_404(Aset, id=id)
+    kode = aset.kode_aset
     aset.delete()
+    messages.success(request, f'Aset {kode} berhasil dihapus!')
     return redirect('inventaris_list')
 
 
 # ================= DETAIL + HISTORI =================
 
+@login_required
 def aset_detail(request, kode):
     aset = get_object_or_404(Aset, kode_aset=kode)
     histori = MutasiAset.objects.filter(aset=aset).order_by('-tanggal')
@@ -99,32 +121,41 @@ def aset_detail(request, kode):
 
 # ================= MUTASI =================
 
+@login_required
 def mutasi_aset(request, id):
     aset = get_object_or_404(Aset, id=id)
-    ruangan_list = Ruangan.objects.all()
 
     if request.method == "POST":
-        ruangan_baru = Ruangan.objects.get(id=request.POST['ruangan'])
+        form = MutasiForm(request.POST)
+        if form.is_valid():
+            ruangan_baru = form.cleaned_data['ke_ruangan']
+            
+            MutasiAset.objects.create(
+                aset=aset,
+                dari_ruangan=aset.ruangan,
+                ke_ruangan=ruangan_baru
+            )
 
-        MutasiAset.objects.create(
-            aset=aset,
-            dari_ruangan=aset.ruangan,
-            ke_ruangan=ruangan_baru
-        )
+            aset.ruangan = ruangan_baru
+            aset.save()
 
-        aset.ruangan = ruangan_baru
-        aset.save()
-
-        return redirect('inventaris_list')
+            messages.success(request, f'Aset {aset.kode_aset} berhasil dipindahkan!')
+            return redirect('inventaris_list')
+        else:
+            messages.error(request, 'Form tidak valid!')
+    else:
+        form = MutasiForm()
 
     return render(request, 'inventaris/mutasi.html', {
         'aset': aset,
-        'ruangan_list': ruangan_list
+        'form': form,
+        'title': f'Mutasi Aset {aset.kode_aset}'
     })
 
 
 # ================= CETAK BARCODE =================
 
+@login_required
 def cetak_barcode(request, id):
     aset = get_object_or_404(Aset, id=id)
     return render(request, 'inventaris/cetak_barcode.html', {
@@ -134,6 +165,7 @@ def cetak_barcode(request, id):
 
 # ================= PDF =================
 
+@login_required
 def pdf_inventaris(request):
     aset = Aset.objects.all()
     template = get_template('inventaris/pdf_inventaris.html')
@@ -146,6 +178,7 @@ def pdf_inventaris(request):
     return response
 
 
+@login_required
 def pdf_mutasi(request):
     mutasi = MutasiAset.objects.all().order_by('-tanggal')
 
@@ -161,6 +194,7 @@ def pdf_mutasi(request):
 
 # ================= REKAP RUANGAN =================
 
+@login_required
 def rekap_ruangan(request):
     rekap = Aset.objects.values('ruangan__nama').annotate(
         total=Count('id')
@@ -173,6 +207,7 @@ def rekap_ruangan(request):
 
 # ================= GRAFIK SIMPLE =================
 
+@login_required
 def grafik_dashboard(request):
     per_ruangan = Aset.objects.values('ruangan__nama').annotate(total=Count('id'))
     kondisi = Aset.objects.values('kondisi').annotate(total=Count('id'))
@@ -185,6 +220,7 @@ def grafik_dashboard(request):
 
 # ================= LIST MUTASI + FILTER TANGGAL =================
 
+@login_required
 def mutasi_list(request):
 
     start = request.GET.get('start')
@@ -202,6 +238,7 @@ def mutasi_list(request):
 
 # ================= REKAP MUTASI BULANAN =================
 
+@login_required
 def rekap_mutasi_bulanan(request):
 
     mutasi_bulanan = (
@@ -212,6 +249,7 @@ def rekap_mutasi_bulanan(request):
         .order_by('bulan')
     )
 
+
     return render(request, 'inventaris/rekap_mutasi_bulanan.html', {
         'mutasi_bulanan': mutasi_bulanan
     })
@@ -219,10 +257,12 @@ def rekap_mutasi_bulanan(request):
 
 # ================= TOTAL ASET RUSAK =================
 
+@login_required
 def total_aset_rusak(request):
-
-    aset_rusak = Aset.objects.filter(kondisi="Rusak").count()
+    aset_rusak_list = Aset.objects.filter(kondisi="Rusak")
+    aset_rusak = aset_rusak_list.count()
 
     return render(request, 'inventaris/aset_rusak.html', {
-        'aset_rusak': aset_rusak
+        'aset_rusak': aset_rusak,
+        'aset_rusak_list': aset_rusak_list,
     })

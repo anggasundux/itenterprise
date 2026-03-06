@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard Pengadaan{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div style="padding: 20px;">
+        <h1 style="margin-bottom: 30px;">Dashboard Pengadaan IT</h1>
+
+        <!-- Stats Cards -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+            <div style="background: #3b82f6; color: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h5 style="margin: 0 0 10px 0; font-size: 14px; opacity: 0.9;">Total SPPB</h5>
+                <h2 style="margin: 0; font-size: 32px;">{{ total_sppb }}</h2>
+            </div>
+            <div style="background: #f59e0b; color: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h5 style="margin: 0 0 10px 0; font-size: 14px; opacity: 0.9;">Dipesan</h5>
+                <h2 style="margin: 0; font-size: 32px;">{{ total_dipesan }}</h2>
+            </div>
+            <div style="background: #06b6d4; color: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h5 style="margin: 0 0 10px 0; font-size: 14px; opacity: 0.9;">Datang</h5>
+                <h2 style="margin: 0; font-size: 32px;">{{ total_datang }}</h2>
+            </div>
+            <div style="background: #10b981; color: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h5 style="margin: 0 0 10px 0; font-size: 14px; opacity: 0.9;">Verified</h5>
+                <h2 style="margin: 0; font-size: 32px;">{{ total_verified }}</h2>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap;">
+            <a href="{% url 'pengadaan:create_sppb' %}" style="background: #3b82f6; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-plus"></i> Buat SPPB Baru
+            </a>
+            <a href="{% url 'pengadaan:list_sppb' %}" style="background: #6b7280; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-list"></i> Lihat Semua SPPB
+            </a>
+            <a href="{% url 'pengadaan:laporan' %}" style="background: #8b5cf6; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-file-pdf"></i> Laporan Bulanan
+            </a>
+            <a href="{% url 'pengadaan:list_vendor' %}" style="background: #ec4899; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-building"></i> Kelola Vendor
+            </a>
+        </div>
+
+        <!-- Recent Data -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 20px;">
+            <!-- Recent SPPB -->
+            <div style="background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;">
+                <div style="background: #3b82f6; color: white; padding: 15px; font-weight: bold;">
+                    SPPB Terbaru
+                </div>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f3f4f6;">
+                                <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e5e7eb;">No. SPPB</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e5e7eb;">Status</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e5e7eb;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sppb in recent_sppb %}
+                            <tr style="border-bottom: 1px solid #e5e7eb;">
+                                <td style="padding: 12px;"><strong>{{ sppb.nomor_sppb }}</strong></td>
+                                <td style="padding: 12px;">
+                                    <span style="background: {% if sppb.status == 'masuk_inventaris' %}#10b981{% elif sppb.status == 'diverifikasi' %}#06b6d4{% elif sppb.status == 'datang' %}#f59e0b{% else %}#6b7280{% endif %}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                        {{ sppb.get_status_display }}
+                                    </span>
+                                </td>
+                                <td style="padding: 12px;">
+                                    <a href="{% url 'pengadaan:detail_sppb' sppb.pk %}" style="color: #3b82f6; text-decoration: none;">Detail</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" style="padding: 20px; text-align: center; color: #9ca3af;">Tidak ada data</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pending Barang -->
+            <div style="background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;">
+                <div style="background: #f59e0b; color: white; padding: 15px; font-weight: bold;">
+                    Barang Menunggu Verifikasi
+                </div>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f3f4f6;">
+                                <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e5e7eb;">Barang</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e5e7eb;">Status</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e5e7eb;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for barang in pending_barang %}
+                            <tr style="border-bottom: 1px solid #e5e7eb;">
+                                <td style="padding: 12px;">{{ barang.nama_barang }}</td>
+                                <td style="padding: 12px;">
+                                    <span style="background: {% if barang.sppb.status == 'datang' %}#06b6d4{% else %}#f59e0b{% endif %}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                        {{ barang.sppb.get_status_display }}
+                                    </span>
+                                </td>
+                                <td style="padding: 12px;">
+                                    <a href="{% url 'pengadaan:update_status' barang.sppb.pk %}" style="color: #3b82f6; text-decoration: none;">Update</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" style="padding: 20px; text-align: center; color: #9ca3af;">Tidak ada data</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

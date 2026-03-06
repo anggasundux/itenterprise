@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h3 class="mb-4">💻 Detail Unit Komputer</h3>
+
+<div class="card mb-4 shadow-sm">
+<div class="card-body">
+
+<div class="row">
+
+<div class="col-md-6">
+
+<strong>Nama Unit:</strong> {{ unit.nama_unit }} <br>
+<strong>Hostname:</strong> {{ unit.hostname|default:"-" }} <br>
+<strong>IP Address:</strong> {{ unit.ip_address }} <br>
+<strong>MAC Address:</strong> {{ unit.mac_address|default:"-" }} <br>
+
+<strong>CPU (Inventaris):</strong>
+{% if unit.aset %}
+{{ unit.aset.kode_aset }} - {{ unit.aset.nama_aset }}
+{% else %}
+-
+{% endif %}
+
+</div>
+
+<div class="col-md-6">
+
+<strong>Ruangan:</strong>
+{{ unit.ruangan.nama|default:"-" }} <br>
+
+<strong>Pengguna:</strong>
+{% if unit.pengguna %}
+{{ unit.pengguna.username }}
+{% else %}
+-
+{% endif %}
+<br>
+
+<strong>Status:</strong>
+
+{% if unit.status == 'aktif' %}
+<span class="badge bg-success">Aktif</span>
+{% elif unit.status == 'maintenance' %}
+<span class="badge bg-warning text-dark">Maintenance</span>
+{% elif unit.status == 'rusak' %}
+<span class="badge bg-danger">Rusak</span>
+{% elif unit.status == 'nonaktif' %}
+<span class="badge bg-dark">Nonaktif</span>
+{% endif %}
+
+<br><br>
+
+<strong>Sistem Operasi:</strong>
+{{ unit.sistem_operasi|default:"-" }} <br>
+
+<strong>Spesifikasi:</strong>
+{{ unit.spesifikasi|default:"-" }}
+
+</div>
+
+</div>
+</div>
+</div>
+
+<h5 class="mb-3">🖥 Perangkat Tambahan</h5>
+
+<a href="{% url 'perangkat_add' unit.id %}"
+class="btn btn-primary mb-3">
+➕ Tambah Perangkat
+</a>
+
+<table class="table table-bordered table-striped align-middle">
+<thead class="table-light text-center">
+<tr>
+<th>Jenis</th>
+<th>Aset Inventaris</th>
+<th>Merk</th>
+<th>No Seri</th>
+<th width="120">Aksi</th>
+</tr>
+</thead>
+
+<tbody>
+{% for p in unit.perangkat_tambahan.all %}
+<tr>
+
+<td>{{ p.get_jenis_display }}</td>
+
+<td>
+{% if p.aset %}
+{{ p.aset.kode_aset }} - {{ p.aset.nama_aset }}
+{% else %}
+-
+{% endif %}
+</td>
+
+<td>{{ p.merk|default:"-" }}</td>
+
+<td>{{ p.nomor_seri|default:"-" }}</td>
+
+<td class="text-center">
+<a href="{% url 'perangkat_delete' p.id %}"
+class="btn btn-danger btn-sm"
+onclick="return confirm('Hapus perangkat ini?')">
+Hapus
+</a>
+</td>
+
+</tr>
+
+{% empty %}
+<tr>
+<td colspan="5" class="text-center text-muted">
+Belum ada perangkat tambahan
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<a href="{% url 'unit_list' %}" class="btn btn-secondary mt-3">
+⬅ Kembali
+</a>
+
+{% endblock %}

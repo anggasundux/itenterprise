@@ -4,97 +4,203 @@
 <h3 class="mb-3">📦 Data Gudang</h3>
 
 <div class="mb-3">
-    <a href="{% url 'consumable_add' %}" class="btn btn-primary">
-        ➕ Tambah Barang
-    </a>
 
-    <a href="{% url 'pengeluaran_list' %}" class="btn btn-info ms-2">
-        📜 Riwayat Pengeluaran
-    </a>
+<a href="{% url 'consumable_add' %}" class="btn btn-primary">
+➕ Tambah Barang
+</a>
+
+<a href="{% url 'pengeluaran_list' %}" class="btn btn-info ms-2">
+📜 Riwayat Pengeluaran
+</a>
+
+<a href="{% url 'laporan_stok_pdf' %}" class="btn btn-danger ms-2">
+📄 Laporan Stok PDF
+</a>
+
 </div>
 
+
+<!-- SEARCH -->
+<form method="GET" class="mb-3">
+<div class="input-group">
+
+<input type="text"
+name="search"
+class="form-control"
+placeholder="Cari barang / kategori / gudang..."
+value="{{ search|default:'' }}">
+
+<button class="btn btn-primary">
+🔍 Cari
+</button>
+
+</div>
+</form>
+
+
 <table class="table table-bordered table-striped text-center align-middle">
+
 <thead class="table-primary">
 <tr>
-    <th>Nama</th>
-    <th>Kategori</th>
-    <th>Stok</th>
-    <th>Satuan</th>
-    <th>Gudang</th>
-    <th>Status</th>
-    <th>Aksi</th>
+<th>Nama</th>
+<th>Kategori</th>
+<th>Stok</th>
+<th>Satuan</th>
+<th>Gudang</th>
+<th>Status</th>
+<th>Aksi</th>
 </tr>
 </thead>
 
 <tbody>
+
 {% for b in data %}
 <tr>
-    <td>{{ b.nama_barang }}</td>
-    <td>{{ b.kategori }}</td>
-    <td>{{ b.stok }}</td>
-    <td>{{ b.satuan }}</td>
-    <td>{{ b.gudang.nama }}</td>
 
-    <!-- STATUS STOK -->
-    <td>
-        {% if b.stok <= b.batas_minimum %}
-            <span class="badge bg-danger">MINIM</span>
-        {% else %}
-            <span class="badge bg-success">AMAN</span>
-        {% endif %}
-    </td>
+<td>{{ b.nama_barang }}</td>
+<td>{{ b.kategori }}</td>
+<td>{{ b.stok }}</td>
+<td>{{ b.satuan }}</td>
+<td>{{ b.gudang.nama }}</td>
 
-    <!-- AKSI -->
-    <td>
-        <a href="{% url 'consumable_edit' b.id %}" 
-           class="btn btn-sm btn-warning">
-           Edit
-        </a>
+<td>
+{% if b.stok <= b.batas_minimum %}
+<span class="badge bg-danger">MINIM</span>
+{% else %}
+<span class="badge bg-success">AMAN</span>
+{% endif %}
+</td>
 
-        <a href="{% url 'consumable_delete' b.id %}"
-           class="btn btn-sm btn-danger"
-           onclick="return confirm('Hapus barang ini?')">
-           Hapus
-        </a>
-    </td>
+<td>
+
+<a href="{% url 'consumable_edit' b.id %}"
+class="btn btn-sm btn-warning">
+Edit
+</a>
+
+<a href="{% url 'consumable_delete' b.id %}"
+class="btn btn-sm btn-danger"
+onclick="return confirm('Hapus barang ini?')">
+Hapus
+</a>
+
+</td>
+
 </tr>
+
 {% empty %}
+
 <tr>
-    <td colspan="7" class="text-muted">
-        Belum ada data barang
-    </td>
+<td colspan="7" class="text-muted">
+Belum ada data barang
+</td>
 </tr>
+
 {% endfor %}
+
 </tbody>
 </table>
+
+
+<!-- PAGINATION -->
+<nav>
+<ul class="pagination justify-content-center">
+
+{% if data.has_previous %}
+<li class="page-item">
+<a class="page-link"
+href="?page=1&search={{ search|default:'' }}&status={{ status|default:'' }}">
+First
+</a>
+</li>
+
+<li class="page-item">
+<a class="page-link"
+href="?page={{ data.previous_page_number }}&search={{ search|default:'' }}&status={{ status|default:'' }}">
+Previous
+</a>
+</li>
+{% endif %}
+
+
+{% for num in data.paginator.page_range %}
+
+{% if data.number == num %}
+<li class="page-item active">
+<span class="page-link">{{ num }}</span>
+</li>
+
+{% elif num > data.number|add:'-3' and num < data.number|add:'3' %}
+<li class="page-item">
+<a class="page-link"
+href="?page={{ num }}&search={{ search|default:'' }}&status={{ status|default:'' }}">
+{{ num }}
+</a>
+</li>
+{% endif %}
+
+{% endfor %}
+
+
+{% if data.has_next %}
+<li class="page-item">
+<a class="page-link"
+href="?page={{ data.next_page_number }}&search={{ search|default:'' }}&status={{ status|default:'' }}">
+Next
+</a>
+</li>
+
+<li class="page-item">
+<a class="page-link"
+href="?page={{ data.paginator.num_pages }}&search={{ search|default:'' }}&status={{ status|default:'' }}">
+Last
+</a>
+</li>
+{% endif %}
+
+</ul>
+</nav>
+
 
 <hr>
 
 <h4 class="mb-2">⚠ Daftar Stok Minim</h4>
 
 <ul class="list-group mb-3">
+
 {% for s in stok_minim %}
+
 <li class="list-group-item d-flex justify-content-between align-items-center">
-    {{ s.nama_barang }} — sisa {{ s.stok }} {{ s.satuan }}
-    <span class="badge bg-secondary">
-        {{ s.gudang.nama }}
-    </span>
+
+{{ s.nama_barang }} — sisa {{ s.stok }} {{ s.satuan }}
+
+<span class="badge bg-secondary">
+{{ s.gudang.nama }}
+</span>
+
 </li>
+
 {% empty %}
+
 <li class="list-group-item text-success">
-    ✅ Semua stok aman
+✅ Semua stok aman
 </li>
+
 {% endfor %}
+
 </ul>
 
-<div class="mb-3">
-    <a href="{% url 'pengeluaran_add' %}" class="btn btn-success">
-        📤 Input Pengeluaran Barang
-    </a>
 
-    <a href="{% url 'rekap_pengeluaran' %}" class="btn btn-dark ms-2">
-        📊 Rekap Pemakaian Barang
-    </a>
+<div class="mb-3">
+
+<a href="{% url 'pengeluaran_add' %}" class="btn btn-success">
+📤 Input Pengeluaran Barang
+</a>
+
+<a href="{% url 'rekap_pengeluaran' %}" class="btn btn-dark ms-2">
+📊 Rekap Pemakaian Barang
+</a>
+
 </div>
 
 {% endblock %}

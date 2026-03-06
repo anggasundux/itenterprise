@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Daftar Surat Pengajuan{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1>Daftar Surat Pengajuan</h1>
+        </div>
+    </div>
+
+    <!-- Filter -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <form method="get" class="form-inline">
+                <label class="mr-2">Filter Status:</label>
+                <select name="status" class="form-control mr-2">
+                    <option value="">-- Semua Status --</option>
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-primary">Filter</button>
+                <a href="{% url 'pengadaan:create_surat' %}" class="btn btn-success ml-2">
+                    + Buat Surat Baru
+                </a>
+            </form>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>No. Surat</th>
+                                <th>Unit</th>
+                                <th>Tanggal</th>
+                                <th>Status</th>
+                                <th>Dibuat Oleh</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for surat in surat_list %}
+                            <tr>
+                                <td><strong>{{ surat.nomor_surat }}</strong></td>
+                                <td>{{ surat.unit }}</td>
+                                <td>{{ surat.tanggal_pengajuan|date:"d-m-Y" }}</td>
+                                <td>
+                                    <span class="badge badge-{% if surat.status == 'disetujui' %}success{% elif surat.status == 'ditolak' %}danger{% elif surat.status == 'diajukan' %}warning{% else %}secondary{% endif %}">
+                                        {{ surat.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>{{ surat.created_by }}</td>
+                                <td>
+                                    <a href="{% url 'pengadaan:detail_surat' surat.pk %}" class="btn btn-sm btn-info">
+                                        Lihat
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-4">Tidak ada data</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

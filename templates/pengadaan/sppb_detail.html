@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Detail SPPB {{ sppb.nomor_sppb }}{% endblock %}
+
+{% block content %}
+<div style="padding:20px;">
+    <div style="max-width:900px;margin:0 auto;background:white;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.05);overflow:hidden;">
+        <div style="background:#3b82f6;color:white;padding:16px;font-weight:bold;">Detail SPPB</div>
+        <div style="padding:16px;">
+            <h2 style="margin:0 0 12px 0;">{{ sppb.nomor_sppb }}</h2>
+            <p><strong>Tanggal:</strong> {{ sppb.tanggal_sppb|date:"d-m-Y" }}</p>
+            <p><strong>Unit:</strong> {{ sppb.unit }}</p>
+            {% if sppb.ruangan %}
+            <p><strong>Ruangan:</strong> {{ sppb.ruangan.nama }}</p>
+            {% endif %}
+            {% if sppb.file_sppb %}
+            <p><strong>File SPPB:</strong> <a href="{{ sppb.file_sppb.url }}" target="_blank">Download</a></p>
+            {% endif %}
+            <p><strong>Status:</strong> {{ sppb.get_status_display }}</p>
+            {% if sppb.keterangan %}
+            <p><strong>Keterangan:</strong> {{ sppb.keterangan }}</p>
+            {% endif %}
+
+            <hr />
+
+            <h3>Daftar Barang</h3>
+            <div style="overflow-x:auto;">
+                <table style="width:100%;border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#f3f4f6;">
+                            <th style="padding:10px;text-align:left;">Nama Barang</th>
+                            <th style="padding:10px;text-align:left;">Spesifikasi</th>
+                            <th style="padding:10px;text-align:right;">Jumlah</th>
+                            <th style="padding:10px;text-align:left;">Satuan</th>
+                            <th style="padding:10px;text-align:right;">Harga Satuan</th>
+                            <th style="padding:10px;text-align:right;">Total</th>
+                            <th style="padding:10px;text-align:left;">Aset</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in detail_list %}
+                        <tr style="border-bottom:1px solid #e5e7eb;">
+                            <td style="padding:10px;">{{ d.nama_barang }}</td>
+                            <td style="padding:10px;">{{ d.spesifikasi }}</td>
+                            <td style="padding:10px;text-align:right;">{{ d.jumlah }}</td>
+                            <td style="padding:10px;">{{ d.satuan }}</td>
+                            <td style="padding:10px;text-align:right;">{{ d.harga_satuan|floatformat:2 }}</td>
+                            <td style="padding:10px;text-align:right;">{{ d.total_harga|floatformat:2 }}</td>
+                            <td style="padding:10px;">{% if d.aset_inventaris %}{{ d.aset_inventaris.kode_aset }}{% else %}-{% endif %}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" style="padding:20px;text-align:center;color:#9ca3af;">Belum ada barang</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5" style="padding:10px;text-align:right;font-weight:bold;">Total Nominal</td>
+                            <td style="padding:10px;text-align:right;font-weight:bold;">{{ total_nominal|floatformat:2 }}</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div style="margin-top:16px;display:flex;gap:8px;">
+                <a href="{% url 'pengadaan:add_detail_barang' sppb.pk %}" class="btn" style="background:#10b981;color:white;padding:8px 12px;border-radius:6px;text-decoration:none;">Tambah Barang</a>
+                <a href="{% url 'pengadaan:update_status' sppb.pk %}" class="btn" style="background:#3b82f6;color:white;padding:8px 12px;border-radius:6px;text-decoration:none;">Update Status</a>
+                <a href="{% url 'pengadaan:list_sppb' %}" style="background:#6b7280;color:white;padding:8px 12px;border-radius:6px;text-decoration:none;">Kembali</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
